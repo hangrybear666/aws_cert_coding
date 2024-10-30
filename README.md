@@ -2,6 +2,40 @@
 coming up
 
 <details closed>
+<summary><b>AWS IAM</b></summary>
+
+#### 1. Create an organization in your root account and create a well Architected Multi Account Environment
+
+- First Create Organization in AWS Console to be able to execute the terraform config
+
+```bash
+cd aws_iam/terraform
+terraform init
+terraform apply-auto-approve
+```
+
+<u>The Hierarchy is as follows:</u>
+
+```bash
+---------------------------------
+|           org/root             |
+| dev ou  | sandbox ou | prod ou |
+| dev_acc | tempdel ou |         |
+|                                |
+---------------------------------
+```
+
+- Then login to management account and switch role to dev account
+- In the Switch Role dialog:
+- Account ID: Enter the Account ID of your new member account.
+- Role Name: Enter `OrganizationAccountAccessRole`
+- Display Name: for UI
+- Color: Optional
+
+</details>
+
+-----
+<details closed>
 <summary><b>AWS Lambda</b></summary>
 
 ### Theory 
