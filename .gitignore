@@ -1,5 +1,5 @@
 aws_lambda/terraform/output.txt
-
+.env
 
 # Local .terraform directories
 **/.terraform/*
@@ -38,3 +38,4 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+aws_ec2_vpc_subnets/terraform/.env
