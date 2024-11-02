@@ -31,7 +31,7 @@ resource "aws_iam_user_login_profile" "dev_account_user_profile" {
 
 # resource "aws_organizations_account" "network_account" {
 #   name  = "hangrybear_network"
-#   email = "hangrybear_network@protonmail.com"
+#   email = "hangrybear_net@protonmail.com"
 #   parent_id = aws_organizations_organizational_unit.network.id
 #   role_name = "OrganizationAccountAccessRole" # AWS default role to access member account from management account
 #   # close_on_deletion = true

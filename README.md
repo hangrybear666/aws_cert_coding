@@ -20,20 +20,22 @@ terraform apply-auto-approve
 <u>The Hierarchy is as follows:</u>
 
 ```bash
----------------------------------
-|           org/root             |
-| dev ou  | sandbox ou | prod ou |
-| dev_acc | tempdel ou |         |
-|                                |
----------------------------------
+-----------------------------------------------
+|           org/root                           |
+| dev ou  | sandbox ou | prod ou | network ou  |
+| dev_acc | tempdel ou |           network_acc |
+|                                              |
+-----------------------------------------------
 ```
 
-- Then login to management account and switch role to dev account
+*Notes:*
+- The dev VPC and Subnet created by aws_ec2_vpc_subnets is shared across the organization via RAM
+
+**To access EC2 instances of the admin account:**
+- Then login to dev account using credentials provided by
 - In the Switch Role dialog:
-- **Account ID**: Enter the Account ID of your new member account.
-- - **Role Name**: Enter `OrganizationAccountAccessRole`
-- - **Display Name**: for UI
-- - **Color**: Optional
+- **Account ID**: Enter the Account ID of your admin account
+- - **Role Name**: Enter `EC2FullAccessRole`
 
 </details>
 

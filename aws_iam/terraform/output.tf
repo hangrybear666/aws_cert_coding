@@ -17,10 +17,6 @@ output "organizational_units" {
   value = data.aws_organizations_organizational_units.ous.children
 }
 
-output "dev_account_id" {
-  value = aws_organizations_account.dev_account.id
-}
-
 # output "network_account_id" {
 #   value = aws_organizations_account.network_account.id
 # }
@@ -30,9 +26,12 @@ output "admin_account_id" {
   value = data.aws_caller_identity.admin_account.account_id
 }
 
+output "dev_account_id" {
+  value = aws_organizations_account.dev_account.id
+}
 output "dev_account_user_password" {
   value = aws_iam_user_login_profile.dev_account_user_profile.password
 }
-output "dev_account_ecnrypted_user_password" {
-  value = aws_iam_user_login_profile.dev_account_user_profile.encrypted_password
+output "dev_account_username" {
+  value = aws_iam_user.dev_account_user.name
 }
