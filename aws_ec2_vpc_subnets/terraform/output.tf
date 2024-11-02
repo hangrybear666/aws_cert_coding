@@ -11,4 +11,3 @@ output "ec2-ssh-commands" {
   value = [for instance in module.dev_ec2_instances.ec2_instance : "ssh -i ${var.private_key_location} admin@${instance.public_ip}"]
   description = "List of SSH commands for accessing the EC2 instances"
 }
-

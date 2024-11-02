@@ -1,31 +1,21 @@
-
-resource "aws_default_security_group" "default_sg" {
+resource "aws_security_group" "ec2_basic_sg" {
+  name = "EC2BasicSecurityGroup"
+  description = "Basic Security Group for Dev EC2 machine"
   vpc_id = var.aws_vpc.id
-
   ingress {
+    cidr_blocks = var.my_ips
     from_port = 22
     to_port = 22
-    protocol = "TCP"
-    cidr_blocks = var.my_ips
+    protocol = "tcp"
   }
-
-  # ingress {
-  #   from_port = 8080
-  #   to_port = 8080
-  #   protocol = "TCP"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  # }
-
   egress {
+    cidr_blocks = ["0.0.0.0/0"]
     from_port = 0
     to_port = 0
     protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-    prefix_list_ids = []
   }
-
   tags = {
-    Name: "${var.env_prefix}-default-sg"
+    Name: "${var.env_prefix}-sg"
   }
 }
 
@@ -65,7 +55,7 @@ resource "aws_instance" "dev_instance" {
   count = var.instance_count
 
   subnet_id = var.subnet_id
-  vpc_security_group_ids = [aws_default_security_group.default_sg.id]
+  vpc_security_group_ids = [aws_security_group.ec2_basic_sg.id]
   availability_zone = var.avail_zone
 
   associate_public_ip_address = true
