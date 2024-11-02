@@ -23,22 +23,3 @@ resource "aws_organizations_organizational_unit" "production" {
   parent_id = data.aws_organizations_organization.root_org.roots[0].id
 }
 
-resource "aws_organizations_account" "dev_account" {
-  name  = "hangrybear_dev"
-  email = "hangrybear_dev@protonmail.com"
-  parent_id = aws_organizations_organizational_unit.development.id
-  role_name = "OrganizationAccountAccessRole" # AWS default role to access member account from management account
-  close_on_deletion = true
-  iam_user_access_to_billing = "ALLOW"
-}
-
-resource "aws_organizations_account" "network_account" {
-  name  = "hangrybear_network"
-  email = "hangrybear_network@protonmail.com"
-  parent_id = aws_organizations_organizational_unit.network.id
-  role_name = "OrganizationAccountAccessRole" # AWS default role to access member account from management account
-  close_on_deletion = true
-  iam_user_access_to_billing = "ALLOW"
-}
-
-

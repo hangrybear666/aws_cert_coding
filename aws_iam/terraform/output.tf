@@ -20,17 +20,19 @@ output "organizational_units" {
 output "dev_account_id" {
   value = aws_organizations_account.dev_account.id
 }
-// 577638368192
 
-output "network_account_id" {
-  value = aws_organizations_account.network_account.id
-}
+# output "network_account_id" {
+#   value = aws_organizations_account.network_account.id
+# }
 
+// 010928217051
 output "admin_account_id" {
   value = data.aws_caller_identity.admin_account.account_id
 }
-// 010928217051
 
-output "resource_share_info" {
-  value = aws_ram_resource_share.hangrybear_org.arn
+output "dev_account_user_password" {
+  value = aws_iam_user_login_profile.dev_account_user_profile.password
+}
+output "dev_account_ecnrypted_user_password" {
+  value = aws_iam_user_login_profile.dev_account_user_profile.encrypted_password
 }
