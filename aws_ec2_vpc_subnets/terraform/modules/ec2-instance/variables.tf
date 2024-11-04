@@ -1,5 +1,5 @@
-
-variable "my_ips" {}
+variable "bastion_host_private_ip" {}
+variable "bastion_host_public_ip" {}
 variable "env_prefix" {}
 variable "public_key_location" {}
 variable "instance_type" {}

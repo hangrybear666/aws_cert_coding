@@ -1,21 +1,15 @@
-resource "aws_security_group" "ec2_basic_sg" {
-  name = "EC2BasicSecurityGroup"
-  description = "Basic Security Group for Dev EC2 machine"
+resource "aws_security_group" "ec2_private_sg" {
+  name = "EC2PrivateSecurityGroup"
+  description = "Private Security Group for Dev EC2 machine"
   vpc_id = var.aws_vpc.id
   ingress {
-    cidr_blocks = var.my_ips
+    cidr_blocks = ["${var.bastion_host_private_ip}/32"]
     from_port = 22
     to_port = 22
     protocol = "tcp"
   }
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-  }
   tags = {
-    Name: "${var.env_prefix}-sg"
+    Name: "${var.env_prefix}-private-sg"
   }
 }
 
@@ -55,10 +49,10 @@ resource "aws_instance" "dev_instance" {
   count = var.instance_count
 
   subnet_id = var.subnet_id
-  vpc_security_group_ids = [aws_security_group.ec2_basic_sg.id]
+  vpc_security_group_ids = [aws_security_group.ec2_private_sg.id]
   availability_zone = var.avail_zone
 
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   key_name = aws_key_pair.ssh_key.key_name
 
   # alternative is to use an existing key from AWS and use its respective private key .pem file to ssh into the server
@@ -71,7 +65,12 @@ resource "aws_instance" "dev_instance" {
   // WARNING: Provisioners are NOT recommended by terraform as it breaks the principle of idempotency
   connection {
     type = "ssh"
-    host = self.public_ip
+
+    bastion_host = var.bastion_host_public_ip
+    bastion_user = "admin"
+    bastion_private_key = file(var.private_key_location)
+
+    host = self.private_ip
     user = "admin"
     private_key = file(var.private_key_location)
   }
@@ -89,7 +88,7 @@ resource "aws_instance" "dev_instance" {
   provisioner "remote-exec" {
     inline = [
         "sudo chmod u+x /home/admin/install-git-on-debian-ec2.sh",
-        "/bin/bash /home/admin/install-git-on-debian-ec2.sh"
+        # "/bin/bash /home/admin/install-git-on-debian-ec2.sh"
       ]
   }
 
@@ -97,7 +96,6 @@ resource "aws_instance" "dev_instance" {
   # provisioner "local-exec" {
   #   command = "echo ${self.public_ip} > output.txt"
   # }
-
 
   tags = {
     Name: "${var.env_prefix}-server"

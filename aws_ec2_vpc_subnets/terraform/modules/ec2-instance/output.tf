@@ -4,3 +4,6 @@ output "debian_12_ami" {
 output "ec2_instance" {
   value = [for instance in aws_instance.dev_instance : instance]
 }
+output "ssh_key_name" {
+  value = aws_key_pair.ssh_key.key_name
+}

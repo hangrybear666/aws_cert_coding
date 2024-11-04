@@ -85,11 +85,10 @@ output.txt
 
 ### TODO
 
-- add private subnet
-- add nat gateway in public subnet and route from private to establish stateful egress
-- add proper security group
+- configure nat gateway in public subnet and route from private to establish stateful egress
+- configure private security group
 
-### 1. Install EC2, VPC, Subnets, IGW and so forth with terraform
+### 1. Install EC2 Bastion Host, EC2 Instance, VPC, Private & Public Subnet, IGW, NAT GW, Elastic IP etc.
 
 #### a. Setup Environment Variables with your secrets and configuration
 scaffold the .env files with the following script and fill in your own details.
@@ -106,6 +105,8 @@ Create `terraform-02-ec2-modularized/terraform.tfvars` file and change any desir
 my_ips               = ["62.xxx.xxx.251/32", "3.xxx.xxx.109/32"]
 public_key_location  = "~/.ssh/id_ed25519.pub"
 private_key_location = "~/.ssh/id_ed25519"
+public_key_name =     "id_ed25519.pub"
+private_key_name =     "id_ed25519"
 instance_count       = 1
 ```
 
@@ -122,6 +123,19 @@ cd aws_ec2_vpc_subnets/terraform
 source .env
 terraform init
 terraform apply --auto-approve
+```
+
+<b>Terraform logs the ssh command for bastion host and the private ec2 ip</b>
+
+```bash
+ssh -i ~/.ssh/id_ed25519 admin@PUBLIC_BASTION_IP
+ssh -i ~/.ssh/id_ed25519 admin@PRIVATE_EC2_IP
+
+# OR use transitive SSH Agent Port Forwarding
+eval $(ssh-agent)
+ssh-add ~/.ssh/id_ed25519
+ssh -A admin@35.159.130.132
+ssh admin@10.0.2.44
 ```
 
 </details>

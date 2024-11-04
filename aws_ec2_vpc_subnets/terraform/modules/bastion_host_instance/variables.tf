@@ -1,0 +1,12 @@
+variable "private_key_location" {}
+variable "private_key_name" {}
+variable "public_key_location" {}
+variable "public_key_name" {}
+variable "env_prefix" {}
+variable "my_ips" {}
+variable "ssh_key_name" {}
+variable "debian_12_ami" {}
+variable "instance_type" {}
+variable "avail_zone" {}
+variable "subnet_id" {}
+variable "aws_vpc" {}

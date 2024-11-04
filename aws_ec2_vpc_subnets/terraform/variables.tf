@@ -55,4 +55,13 @@ variable "private_key_location" {
   type        = string
   default     = "~/.ssh/id_rsa"  # Update to the correct key path if necessary
 }
-
+variable "public_key_name" {
+  description = "Name of your Public Key File"
+  type        = string
+  default     = "id_rsa.pub"  # Update to the correct name if necessary
+}
+variable "private_key_name" {
+  description = "Name of your Private Key File"
+  type        = string
+  default     = "id_rsa"  # Update to the correct name if necessary
+}
