@@ -7,6 +7,7 @@ coming up
 #### 1. Create an organization in your root account and create a well Architected Multi Account Environment
 
 - First Create Organization in AWS Console to be able to execute the terraform config
+- Enable SCPs under AWS Organizations -> Policies -> Service control policies *Note: they don't apply to management acc/iam users of mgmt acc*
 - Enable AWS Resource Explorer in AWS Console to find resources across your organization easily
 - Enable AWS RAM (Resource Access Manager) in AWS Console to share resources between accounts on a high level.
 - In Resource Access Manager Settings Enable Resource Sharing Across AWS Organizations
@@ -82,11 +83,6 @@ output.txt
 
 <details closed>
 <summary><b>AWS EC2 - VPC - Subnets</b></summary>
-
-### TODO
-
-- configure nat gateway in public subnet and route from private to establish stateful egress
-- configure private security group
 
 ### 1. Install EC2 Bastion Host, EC2 Instance, VPC, Private & Public Subnet, IGW, NAT GW, Elastic IP etc.
 
