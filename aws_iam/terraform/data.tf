@@ -30,3 +30,14 @@ data "aws_subnet" "dev_subnet_collection" {
   for_each = toset(data.aws_subnets.dev_subnets.ids)
   id       = each.key
 }
+
+data "aws_security_groups" "dev_security_groups" {
+  tags = {
+    Name = "${var.env_prefix}-*-sg"
+  }
+}
+
+data "aws_key_pair" "dev_ssh_key" {
+  key_name           = "tf-server-key"
+  include_public_key = true
+}
