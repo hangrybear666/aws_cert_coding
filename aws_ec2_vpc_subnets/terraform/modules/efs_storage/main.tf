@@ -35,7 +35,9 @@ resource "aws_security_group" "efs_access" {
   vpc_id = var.aws_vpc.id
 
   ingress {
+    
     security_groups = [var.bastion_host_sec_grp_id, var.ec2_instance_sec_grp_id]
+    # security_groups = [var.bastion_host_sec_grp_id, var.ec2_instance_sec_grp_id, data.aws_security_group.ec2_one_admin_machine_sec_grp.id]
     from_port = 2049
     to_port = 2049
     protocol = "tcp"
@@ -43,6 +45,7 @@ resource "aws_security_group" "efs_access" {
 
   egress {
     security_groups = [var.bastion_host_sec_grp_id, var.ec2_instance_sec_grp_id]
+    # security_groups = [var.bastion_host_sec_grp_id, var.ec2_instance_sec_grp_id, data.aws_security_group.ec2_one_admin_machine_sec_grp.id]
     from_port = 0
     to_port = 0
     protocol = "-1"

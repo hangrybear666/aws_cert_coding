@@ -134,6 +134,15 @@ ssh -A admin@35.159.130.132
 ssh admin@10.0.2.44
 ```
 
+<b>Enable Elastic File System Network share by mounting the drive in each instance.</b>
+
+```bash
+# check terraform output for these commands
+ssh -i ~/.ssh/id_ed25519 admin@PUBLIC_BASTION_IP
+bash /home/admin/mount_efs_drive.sh EFS_PRIVATE_IP
+# etc ...
+```
+
 </details>
 
 -----
