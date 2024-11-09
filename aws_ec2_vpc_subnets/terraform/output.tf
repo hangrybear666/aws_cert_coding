@@ -12,3 +12,7 @@ output "ec2_private_ssh_command" {
   value = [for instance in module.dev_ec2_instances.ec2_instance : "admin@bastion_host_ip: ssh -i ${var.private_key_location} admin@${instance.private_ip}"]
   description = "SSH commands from within Bastion Host to access private subnet instances."
 }
+
+output "enable_efs_drive" {
+  value = "# login to bastion host & ec2 instance via ssh and run \nbash /home/admin/mount_efs_drive.sh ${module.elastic_file_system.efs_private_ip}"
+}

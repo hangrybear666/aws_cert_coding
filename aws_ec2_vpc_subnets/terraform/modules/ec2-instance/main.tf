@@ -91,6 +91,11 @@ resource "aws_instance" "dev_instance" {
     destination = "/home/admin/install-git-on-debian-ec2.sh"
   }
 
+  provisioner "file" {
+    source = "payload/mount_efs_drive.sh"
+    destination = "/home/admin/mount_efs_drive.sh"
+  }
+
   provisioner "remote-exec" {
     inline = [
         "sudo chmod u+x /home/admin/install-git-on-debian-ec2.sh",

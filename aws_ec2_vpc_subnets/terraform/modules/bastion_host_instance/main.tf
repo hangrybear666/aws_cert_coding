@@ -69,6 +69,11 @@ resource "null_resource" "provision_bastion_host" {
     destination = "/home/admin/.ssh/${var.public_key_name}"
   }
 
+  provisioner "file" {
+    source = "payload/mount_efs_drive.sh"
+    destination = "/home/admin/mount_efs_drive.sh"
+  }
+
   provisioner "remote-exec" {
     inline = [
         "sudo chmod 400 /home/admin/.ssh/${var.public_key_name}",

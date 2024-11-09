@@ -21,6 +21,13 @@ resource "aws_efs_mount_target" "efs_mnt_bastion_host" {
   subnet_id = var.private_subnet_id
   security_groups = [aws_security_group.efs_access.id]
 }
+resource "aws_efs_backup_policy" "backup_enabled" {
+  file_system_id = aws_efs_file_system.network_file_system.id
+
+  backup_policy {
+    status = "ENABLED"
+  }
+}
 
 resource "aws_security_group" "efs_access" {
   name = "efs-access-sg"
