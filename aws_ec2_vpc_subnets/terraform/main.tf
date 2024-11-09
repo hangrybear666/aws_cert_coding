@@ -1,10 +1,9 @@
 provider "aws" {}
 
-resource "aws_vpc" "dev_vpc" {
-  cidr_block = var.vpc_cidr_block
-  tags = {
-    Name: "${var.env_prefix}-vpc"
-  }
+module "vpcs" {
+  source = "./modules/vpc"
+  cidr_block = var.dev_vpc_cidr_block
+  env_prefix = var.env_prefix
 }
 
 # creates public subnet (with igw and nat gw) and private subnet for ec2 instances
@@ -14,7 +13,7 @@ module "dev_subnets" {
   private_subnet_cidr_block = var.private_subnet_cidr_block
   avail_zone = var.avail_zone
   env_prefix = var.env_prefix
-  aws_vpc = aws_vpc.dev_vpc
+  aws_vpc = module.vpcs.dev_vpc
 }
 
 # ec2 instances in private subnet
@@ -27,7 +26,7 @@ module "dev_ec2_instances" {
   env_prefix = var.env_prefix
   public_key_location = var.public_key_location
   private_key_location = var.private_key_location
-  aws_vpc = aws_vpc.dev_vpc
+  aws_vpc = module.vpcs.dev_vpc
   avail_zone = var.avail_zone
   subnet_id = module.dev_subnets.aws_subnet_private.id
 }
@@ -44,7 +43,7 @@ module "bastion_host_instance" {
   private_key_name = var.private_key_name
   public_key_location = var.public_key_location
   public_key_name = var.public_key_name
-  aws_vpc = aws_vpc.dev_vpc
+  aws_vpc = module.vpcs.dev_vpc
   avail_zone = var.avail_zone
   subnet_id = module.dev_subnets.aws_subnet_public.id
 }
