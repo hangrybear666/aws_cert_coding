@@ -35,7 +35,8 @@ resource "aws_instance" "bastion_host" {
   subnet_id = var.subnet_id
   vpc_security_group_ids = [aws_security_group.ec2_basic_sg.id]
   availability_zone = var.avail_zone
-  associate_public_ip_address = false
+  associate_public_ip_address = true
+  user_data_replace_on_change = true
   key_name = var.ssh_key_name
   tags = {
     Name: "${var.env_prefix}-bastion-host"
@@ -45,7 +46,12 @@ resource "aws_instance" "bastion_host" {
 # Null resource to wait for the EIP association and handle provisioning
 resource "null_resource" "provision_bastion_host" {
   depends_on = [aws_eip_association.bastion_host_ip_association]
-
+  # runs if bastion_host is recreated
+  lifecycle {
+      replace_triggered_by = [
+        aws_instance.bastion_host.id
+      ]
+  }
   connection {
     type = "ssh"
     host = aws_eip.static_bastion_host_ip.public_ip

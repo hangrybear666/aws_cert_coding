@@ -16,6 +16,16 @@ module "dev_subnets" {
   aws_vpc = module.vpcs.dev_vpc
 }
 
+// Network File System
+module "elastic_file_system" {
+  source = "./modules/efs_storage"
+  env_prefix = var.env_prefix
+  private_subnet_id = module.dev_subnets.aws_subnet_private.id
+  aws_vpc = module.vpcs.dev_vpc
+  bastion_host_sec_grp_id = module.bastion_host_instance.bastion_host_sg_id
+  ec2_instance_sec_grp_id = module.dev_ec2_instances.ec2_private_sg_id
+}
+
 # ec2 instances in private subnet
 module "dev_ec2_instances" {
   source = "./modules/ec2-instance"
