@@ -6,21 +6,32 @@ module "vpcs" {
   env_prefix = var.env_prefix
 }
 
-# creates public subnet (with igw and nat gw) and private subnet for ec2 instances
+# public subnet (with IGW and NAT GW) / private subnet for ec2 instances
 module "dev_subnets" {
   source = "./modules/subnet"
   public_subnet_cidr_block = var.public_subnet_cidr_block
-  private_subnet_cidr_block = var.private_subnet_cidr_block
-  avail_zone = var.avail_zone
+  private_subnet_cidr_block_az1 = var.private_subnet_cidr_block_az1
+  private_subnet_cidr_block_az2 = var.private_subnet_cidr_block_az2
+  avail_zone_1 = var.avail_zone_1
+  avail_zone_2 = var.avail_zone_2
   env_prefix = var.env_prefix
   aws_vpc = module.vpcs.dev_vpc
 }
 
-// Network File System
+module "load_balancing" {
+  source = "./modules/load_balancing"
+  aws_subnets = [module.dev_subnets.aws_subnet_private_az1, module.dev_subnets.aws_subnet_private_az2]
+  private_subnet_cidr_block = var.private_subnet_cidr_block_az1
+  env_prefix = var.env_prefix
+  aws_vpc = module.vpcs.dev_vpc
+  ec2_instances = module.dev_ec2_instances.ec2_instances
+}
+
+// EFS Network File System
 module "elastic_file_system" {
   source = "./modules/efs_storage"
   env_prefix = var.env_prefix
-  private_subnet_id = module.dev_subnets.aws_subnet_private.id
+  private_subnet_id = module.dev_subnets.aws_subnet_private_az1.id
   aws_vpc = module.vpcs.dev_vpc
   bastion_host_sec_grp_id = module.bastion_host_instance.bastion_host_sg_id
   ec2_instance_sec_grp_id = module.dev_ec2_instances.ec2_private_sg_id
@@ -37,8 +48,9 @@ module "dev_ec2_instances" {
   public_key_location = var.public_key_location
   private_key_location = var.private_key_location
   aws_vpc = module.vpcs.dev_vpc
-  avail_zone = var.avail_zone
-  subnet_id = module.dev_subnets.aws_subnet_private.id
+  avail_zone = var.avail_zone_1
+  alb_security_group = module.load_balancing.alb_to_private_ec2_security_group
+  subnet_id = module.dev_subnets.aws_subnet_private_az1.id
 }
 
 # bastion host in public subnet for ssh tunneling to ec2 instance from external ip
@@ -54,6 +66,6 @@ module "bastion_host_instance" {
   public_key_location = var.public_key_location
   public_key_name = var.public_key_name
   aws_vpc = module.vpcs.dev_vpc
-  avail_zone = var.avail_zone
+  avail_zone = var.avail_zone_1
   subnet_id = module.dev_subnets.aws_subnet_public.id
 }

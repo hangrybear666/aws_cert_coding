@@ -1,5 +1,8 @@
-output "aws_subnet_private" {
-  value = aws_subnet.dev_private_subnet
+output "aws_subnet_private_az1" {
+  value = aws_subnet.dev_private_subnet_az1
+}
+output "aws_subnet_private_az2" {
+  value = aws_subnet.dev_private_subnet_az2
 }
 output "aws_subnet_public" {
   value = aws_subnet.dev_public_subnet

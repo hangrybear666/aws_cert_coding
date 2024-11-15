@@ -8,3 +8,4 @@ variable "subnet_id" {}
 variable "private_key_location" {}
 variable "aws_vpc" {}
 variable "instance_count" {}
+variable "alb_security_group" {}

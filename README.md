@@ -159,7 +159,7 @@ cd /home/admin/git/ec2-debian-init/scripts/
 sudo ./configure-ec2-swapfile.sh
 ./install-docker-engine.sh
 cd /home/admin/
-bash expose_html_via_nginx.sh
+bash expose_html_via_nginx.sh dev-1
 echo "" && c
 ```
 

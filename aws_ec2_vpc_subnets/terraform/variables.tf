@@ -10,14 +10,25 @@ variable "public_subnet_cidr_block" {
   default     = "10.0.1.0/24"
 }
 
-variable "private_subnet_cidr_block" {
-  description = "CIDR block for the private subnet within the VPC"
+variable "private_subnet_cidr_block_az1" {
+  description = "CIDR block for the private subnet within AZ1"
   type        = string
   default     = "10.0.2.0/24"
 }
 
-variable "avail_zone" {
-  description = "AWS availability zone where the resources will be launched"
+variable "private_subnet_cidr_block_az2" {
+  description = "CIDR block for the private subnet within AZ2"
+  type        = string
+  default     = "10.0.3.0/24"
+}
+
+variable "avail_zone_1" {
+  description = "AWS availability 1 zone where the resources will be launched"
+  type        = string
+  default     = "eu-central-1a"
+}
+variable "avail_zone_2" {
+  description = "AWS availability 2 zone where the resources will be launched"
   type        = string
   default     = "eu-central-1b"
 }

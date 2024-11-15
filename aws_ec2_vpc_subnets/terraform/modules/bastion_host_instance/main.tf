@@ -1,24 +1,3 @@
-resource "aws_security_group" "ec2_basic_sg" {
-  name = "EC2BasicSecurityGroup"
-  description = "Basic Security Group for Bastion Host machine"
-  vpc_id = var.aws_vpc.id
-  ingress {
-    cidr_blocks = var.my_ips
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-  }
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-  }
-  tags = {
-    Name: "${var.env_prefix}-basic-sg"
-  }
-}
-
 resource "aws_eip" "static_bastion_host_ip" {
   domain   = "vpc"
 

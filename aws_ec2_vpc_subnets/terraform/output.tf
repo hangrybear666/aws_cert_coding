@@ -1,5 +1,5 @@
 output "ec2-private_ips" {
-  value = [for instance in module.dev_ec2_instances.ec2_instance : instance.private_ip]
+  value = [for instance in module.dev_ec2_instances.ec2_instances : instance.private_ip]
   description = "List of public IPs of the EC2 instances."
 }
 
@@ -9,12 +9,12 @@ output "bastion_host_ssh_command" {
 }
 
 output "ec2_private_ssh_command" {
-  value = [for instance in module.dev_ec2_instances.ec2_instance : "admin@bastion_host_ip: ssh -i ${var.private_key_location} admin@${instance.private_ip}"]
+  value = [for instance in module.dev_ec2_instances.ec2_instances : "admin@bastion_host_ip: ssh -i ${var.private_key_location} admin@${instance.private_ip}"]
   description = "SSH commands from within Bastion Host to access private subnet instances."
 }
 
 output "complete_commands" {
-  value = [for instance in module.dev_ec2_instances.ec2_instance : <<EOF
+  value = [for instance in module.dev_ec2_instances.ec2_instances : <<EOF
 #   __   ___ ___       __             __  ___            __   ___
 #  /__` |__   |  |  | |__)    | |\ | /__`  |   /\  |\ | /  ` |__
 #  .__/ |___  |  \__/ |       | | \| .__/  |  /~~\ | \| \__, |___  [${instance.tags.InstanceNum}]
@@ -31,7 +31,7 @@ cd /home/admin/git/ec2-debian-init/scripts/
 sudo ./configure-ec2-swapfile.sh
 ./install-docker-engine.sh
 cd /home/admin/
-bash expose_html_via_nginx.sh
+bash expose_html_via_nginx.sh ${instance.tags.InstanceNum}
 echo "" && curl http://localhost
 EOF
 ]
