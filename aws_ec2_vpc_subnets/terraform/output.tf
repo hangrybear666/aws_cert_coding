@@ -29,9 +29,10 @@ bash /home/admin/mount_efs_drive.sh ${module.elastic_file_system.efs_private_ip}
 bash /home/admin/install-git-on-debian-ec2.sh
 cd /home/admin/git/ec2-debian-init/scripts/
 sudo ./configure-ec2-swapfile.sh
-./install-docker-engine.sh
+bash install-docker-engine.sh
 cd /home/admin/
 bash expose_html_via_nginx.sh ${instance.tags.InstanceNum}
+sleep 5
 echo "" && curl http://localhost
 EOF
 ]

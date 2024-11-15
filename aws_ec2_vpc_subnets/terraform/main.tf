@@ -20,7 +20,9 @@ module "dev_subnets" {
 
 module "load_balancing" {
   source = "./modules/load_balancing"
-  aws_subnets = [module.dev_subnets.aws_subnet_private_az1, module.dev_subnets.aws_subnet_private_az2]
+  # ALB has to live in 2-n availability zones. It ALSO has to live in at least one public subnet for internet access
+  # Unfortunately, my ec2 instances in the private subnet reside in the same AZ as my public subnet, so we have to create another subnet in AZ2
+  aws_subnets = [module.dev_subnets.aws_subnet_private_az2, module.dev_subnets.aws_subnet_public]
   private_subnet_cidr_block = var.private_subnet_cidr_block_az1
   env_prefix = var.env_prefix
   aws_vpc = module.vpcs.dev_vpc

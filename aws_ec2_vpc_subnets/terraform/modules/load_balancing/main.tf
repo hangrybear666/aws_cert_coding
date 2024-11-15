@@ -38,28 +38,28 @@ resource "aws_lb_listener" "http_for_private_ec2_instances" {
   }
 }
 
-resource "aws_alb_listener_rule" "http_redirect_to_root" {
-  listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
-  priority     = 100                     # Ensure priority does not conflict with other rules
+# resource "aws_alb_listener_rule" "http_redirect_to_root" {
+#   listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
+#   priority     = 100                     # Ensure priority does not conflict with other rules
 
-  action {
-    type = "redirect"
+#   action {
+#     type = "redirect"
 
-    redirect {
-      protocol    = "HTTP"           # Keep traffic on HTTP
-      port        = "80"             # HTTP port
-      status_code = "HTTP_301"       # Permanent redirect
-      path        = "/"              # Redirect to the root path
-      query       = "#{query}"       # Preserve query string
-    }
-  }
+#     redirect {
+#       protocol    = "HTTP"           # Keep traffic on HTTP
+#       port        = "80"             # HTTP port
+#       status_code = "HTTP_301"       # Permanent redirect
+#       path        = "/"              # Redirect to the root path
+#       query       = ""               # Remove query parameters
+#     }
+#   }
 
-  condition {
-    path_pattern {
-      values = ["/*"]               # Match all subpaths
-    }
-  }
-}
+#   condition {
+#     path_pattern {
+#       values = ["/*"]               # Match all subpaths
+#     }
+#   }
+# }
 
 #  ___       __   __   ___ ___      __   __   __        __
 #   |   /\  |__) / _` |__   |      / _` |__) /  \ |  | |__)

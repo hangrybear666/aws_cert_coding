@@ -25,12 +25,9 @@ resource "aws_vpc_security_group_ingress_rule" "ssh_from_bastion_host" {
   ip_protocol = "tcp"
 }
 
-# exists by default
-# resource "aws_vpc_security_group_egress_rule" "outbound_access" {
-#   security_group_id = aws_security_group.ec2_private_sg.id
+resource "aws_vpc_security_group_egress_rule" "outbound_access" {
+  security_group_id = aws_security_group.ec2_private_sg.id
 
-#   cidr_ipv4   = "0.0.0.0/0"
-#   from_port   = 0
-#   to_port     = 0
-#   ip_protocol = "-1"
-# }
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
