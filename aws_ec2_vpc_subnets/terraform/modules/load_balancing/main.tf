@@ -38,28 +38,43 @@ resource "aws_lb_listener" "http_for_private_ec2_instances" {
   }
 }
 
-# resource "aws_alb_listener_rule" "http_redirect_to_root" {
-#   listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
-#   priority     = 100                     # Ensure priority does not conflict with other rules
+resource "aws_alb_listener_rule" "http_root_path_forward" {
+  listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
+  priority     = 1 # Higher priority
 
-#   action {
-#     type = "redirect"
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_to_private_ec2s.arn
+  }
 
-#     redirect {
-#       protocol    = "HTTP"           # Keep traffic on HTTP
-#       port        = "80"             # HTTP port
-#       status_code = "HTTP_301"       # Permanent redirect
-#       path        = "/"              # Redirect to the root path
-#       query       = ""               # Remove query parameters
-#     }
-#   }
+  condition {
+    path_pattern {
+      values = ["/"] # Matches only the root path
+    }
+  }
+}
 
-#   condition {
-#     path_pattern {
-#       values = ["/*"]               # Match all subpaths
-#     }
-#   }
-# }
+resource "aws_alb_listener_rule" "http_redirect_to_root" {
+  listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
+  priority     = 2 # Lower priority
+
+  action {
+    type = "redirect"
+
+    redirect {
+      protocol    = "HTTP"
+      port        = "80"
+      status_code = "HTTP_301"
+      path        = "/" # Redirect to the root path
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*"] # Matches all paths
+    }
+  }
+}
 
 #  ___       __   __   ___ ___      __   __   __        __
 #   |   /\  |__) / _` |__   |      / _` |__) /  \ |  | |__)

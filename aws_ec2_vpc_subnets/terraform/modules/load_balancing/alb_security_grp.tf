@@ -19,9 +19,12 @@ resource "aws_vpc_security_group_ingress_rule" "public_http_access" {
 resource "aws_vpc_security_group_egress_rule" "outbound_access" {
   security_group_id = aws_security_group.ec2_alb_sg.id
 
-  # this has resulted in connection issues, likely due to internet egress being prohibited.
-  # My idea was to limit egress to only ec2 instance targets within the private subnet
-  # cidr_ipv4   = var.private_subnet_cidr_block
-  cidr_ipv4 = "0.0.0.0/0"
+  #             __               __
+  #  |  |  /\  |__) |\ | | |\ | / _`
+  #  |/\| /~~\ |  \ | \| | | \| \__>
+  # this could result in connection issues, likely due to internet egress being prohibited.
+  # My idea is to limit egress to only ec2 instance targets within the private subnet
+  cidr_ipv4   = var.private_ec2_subnet_cidr_block
+  # cidr_ipv4 = "0.0.0.0/0"
   ip_protocol = "-1"
 }
