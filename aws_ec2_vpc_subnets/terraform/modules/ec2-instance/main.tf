@@ -81,34 +81,23 @@ resource "aws_instance" "dev_instance" {
     private_key = file(var.private_key_location)
   }
 
+  # copies all files in payload folder
   provisioner "file" {
-    source = "payload/.env"
-    destination = "/home/admin/.env"
-  }
-
-  provisioner "file" {
-    source = "payload/install-git-on-debian-ec2.sh"
-    destination = "/home/admin/install-git-on-debian-ec2.sh"
-  }
-
-  provisioner "file" {
-    source = "payload/mount_efs_drive.sh"
-    destination = "/home/admin/mount_efs_drive.sh"
+    source      = "payload/"
+    destination = "/home/admin"
   }
 
   provisioner "remote-exec" {
     inline = [
         "sudo chmod u+x /home/admin/install-git-on-debian-ec2.sh",
+        "sudo chmod u+x /home/admin/expose_html_via_nginx.sh",
+        "sudo chmod u+x /home/admin/mount_efs_drive.sh",
         # "/bin/bash /home/admin/install-git-on-debian-ec2.sh"
       ]
   }
 
-  # local shell execution
-  # provisioner "local-exec" {
-  #   command = "echo ${self.public_ip} > output.txt"
-  # }
-
   tags = {
-    Name: "${var.env_prefix}-server"
+    Name: "${var.env_prefix}-server",
+    InstanceNum: "${var.env_prefix}-${count.index + 1}"
   }
 }

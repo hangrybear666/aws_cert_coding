@@ -21,6 +21,11 @@ resource "aws_security_group" "ec2_basic_sg" {
 
 resource "aws_eip" "static_bastion_host_ip" {
   domain   = "vpc"
+
+  # to retain static ip address
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 resource "aws_eip_association" "bastion_host_ip_association" {
@@ -77,7 +82,8 @@ resource "null_resource" "provision_bastion_host" {
   provisioner "remote-exec" {
     inline = [
         "sudo chmod 400 /home/admin/.ssh/${var.public_key_name}",
-        "sudo chmod 400 /home/admin/.ssh/${var.private_key_name}"
+        "sudo chmod 400 /home/admin/.ssh/${var.private_key_name}",
+        "sudo chmod u+x /home/admin/mount_efs_drive.sh",
       ]
   }
 }

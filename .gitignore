@@ -38,4 +38,7 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# custom
 aws_ec2_vpc_subnets/terraform/.env
+playground/public_serve_static_html_ec2/index.html

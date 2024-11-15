@@ -17,12 +17,22 @@ output "complete_commands" {
   value = [for instance in module.dev_ec2_instances.ec2_instance : <<EOF
 #   __   ___ ___       __             __  ___            __   ___
 #  /__` |__   |  |  | |__)    | |\ | /__`  |   /\  |\ | /  ` |__
-#  .__/ |___  |  \__/ |       | | \| .__/  |  /~~\ | \| \__, |___
+#  .__/ |___  |  \__/ |       | | \| .__/  |  /~~\ | \| \__, |___  [${instance.tags.InstanceNum}]
+
+# bastion host
 ssh -i ${var.private_key_location} admin@${module.bastion_host_instance.bastion_host_public_ip}
 bash /home/admin/mount_efs_drive.sh ${module.elastic_file_system.efs_private_ip}
+
+# private ec2-instance ${instance.tags.InstanceNum}
 ssh -i ${var.private_key_location} admin@${instance.private_ip}
 bash /home/admin/mount_efs_drive.sh ${module.elastic_file_system.efs_private_ip}
 bash /home/admin/install-git-on-debian-ec2.sh
+cd /home/admin/git/ec2-debian-init/scripts/
+sudo ./configure-ec2-swapfile.sh
+./install-docker-engine.sh
+cd /home/admin/
+bash expose_html_via_nginx.sh
+echo "" && curl http://localhost
 EOF
 ]
   description = "complete SSH commands to setup instance"

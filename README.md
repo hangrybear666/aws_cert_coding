@@ -84,7 +84,7 @@ output.txt
 <details closed>
 <summary><b>AWS EC2 - VPC - Subnets</b></summary>
 
-### 1. Install EC2 Bastion Host, EC2 Instance, VPC, Private & Public Subnet, IGW, NAT GW, Elastic IP etc.
+### 1. Install EC2 Bastion Host, 1-n EC2 Instances, VPCs /w Private & Public Subnet, IGW, NAT GW, Elastic IP, Load Balancer for ingress to private EC2 etc.
 
 #### a. Setup Environment Variables with your secrets and configuration
 scaffold the .env files with the following script and fill in your own details.
@@ -103,7 +103,7 @@ public_key_location  = "~/.ssh/id_ed25519.pub"
 private_key_location = "~/.ssh/id_ed25519"
 public_key_name =     "id_ed25519.pub"
 private_key_name =     "id_ed25519"
-instance_count       = 1
+instance_count       = 2
 ```
 
 #### d. Create S3 bucket to store terraform state to synchronize the state to remote storage as secure backup
@@ -130,17 +130,37 @@ ssh -i ~/.ssh/id_ed25519 admin@PRIVATE_EC2_IP
 # OR use transitive SSH Agent Port Forwarding
 eval $(ssh-agent)
 ssh-add ~/.ssh/id_ed25519
-ssh -A admin@35.159.130.132
-ssh admin@10.0.2.44
+ssh -A admin@PUBLIC_BASTION_IP
+ssh admin@PRIVATE_EC2_IP
 ```
 
-<b>Enable Elastic File System Network share by mounting the drive in each instance.</b>
+<b>Follow the terraform output to provision the ec2-instances</b>
+
+- Mounts Elastic File System Network drive to /mnt/nfs/ in bastion host and ec2-instances (dev-1 - dev-n)
+- Installs git repo containing basic setup scripts for debian ec2 instances (.env file with credentials from step a) is provisioned via tf)
+- configures swapfile so ec2 instance doesn't crash when RAM is fully allocated
+- installs docker engine and adds as systemctl service
+- starts an nginx docker container serving a static html file with dynamic ip and hostname information exposed later via load balancer
 
 ```bash
-# check terraform output for these commands
-ssh -i ~/.ssh/id_ed25519 admin@PUBLIC_BASTION_IP
-bash /home/admin/mount_efs_drive.sh EFS_PRIVATE_IP
-# etc ...
+#   __   ___ ___       __             __  ___            __   ___
+#  /__` |__   |  |  | |__)    | |\ | /__`  |   /\  |\ | /  ` |__
+#  .__/ |___  |  \__/ |       | | \| .__/  |  /~~\ | \| \__, |___ [dev-1]
+
+# bastion host
+ssh -i ~/.ssh/id_ed25519 admin@3.126.9.131
+bash /home/admin/mount_efs_drive.sh 10.0.2.6
+
+# private ec2-instance dev-2
+ssh -i ~/.ssh/id_ed25519 admin@10.0.2.31
+bash /home/admin/mount_efs_drive.sh 10.0.2.6
+bash /home/admin/install-git-on-debian-ec2.sh
+cd /home/admin/git/ec2-debian-init/scripts/
+sudo ./configure-ec2-swapfile.sh
+./install-docker-engine.sh
+cd /home/admin/
+bash expose_html_via_nginx.sh
+echo "" && c
 ```
 
 </details>
