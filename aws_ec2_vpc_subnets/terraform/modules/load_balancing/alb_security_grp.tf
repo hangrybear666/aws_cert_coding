@@ -7,14 +7,14 @@ resource "aws_security_group" "ec2_alb_sg" {
   }
 }
 
-# resource "aws_vpc_security_group_ingress_rule" "public_http_access" {
-#   security_group_id = aws_security_group.ec2_alb_sg.id
+resource "aws_vpc_security_group_ingress_rule" "public_http_access" {
+  security_group_id = aws_security_group.ec2_alb_sg.id
 
-#   cidr_ipv4   = "0.0.0.0/0"
-#   from_port   = 80
-#   to_port     = 80
-#   ip_protocol = "tcp"
-# }
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  to_port     = 80
+  ip_protocol = "tcp"
+}
 
 resource "aws_vpc_security_group_ingress_rule" "public_https_access" {
   security_group_id = aws_security_group.ec2_alb_sg.id

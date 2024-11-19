@@ -24,7 +24,7 @@ resource "aws_lb" "alb_for_private_ec2s" {
 #          __  ___  ___       ___  __
 #  |    | /__`  |  |__  |\ | |__  |__)
 #  |___ | .__/  |  |___ | \| |___ |  \
-resource "aws_lb_listener" "http_for_private_ec2_instances" {
+resource "aws_lb_listener" "https_for_private_ec2_instances" {
   load_balancer_arn = aws_lb.alb_for_private_ec2s.arn
   port              = "443"
   protocol          = "HTTPS"
@@ -36,13 +36,33 @@ resource "aws_lb_listener" "http_for_private_ec2_instances" {
     target_group_arn = aws_lb_target_group.alb_to_private_ec2s.arn
   }
   tags = {
-    Name = "${var.env_prefix}-alb-ec2-http"
+    Name = "${var.env_prefix}-alb-ec2-https"
   }
 }
 
-resource "aws_alb_listener_rule" "http_root_path_forward" {
-  listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
-  priority     = 1 # Higher priority
+resource "aws_lb_listener" "http_redirect_to_https" {
+  load_balancer_arn = aws_lb.alb_for_private_ec2s.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+  tags = {
+    Name = "${var.env_prefix}-alb-ec2-http-redirect"
+  }
+}
+
+# Rule to handle /favicon.ico specifically
+resource "aws_alb_listener_rule" "https_forward_favicon" {
+  listener_arn = aws_lb_listener.https_for_private_ec2_instances.arn
+  priority     = 1 # Higher priority than the redirect rule
 
   action {
     type             = "forward"
@@ -51,13 +71,13 @@ resource "aws_alb_listener_rule" "http_root_path_forward" {
 
   condition {
     path_pattern {
-      values = ["/"] # Matches only the root path
+      values = ["/favicon.ico", "/"] # prevents redirecting the favicon and the root path as both are matched by https_redirect_to_root_path
     }
   }
 }
 
-resource "aws_alb_listener_rule" "https_redirect_to_root" {
-  listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
+resource "aws_alb_listener_rule" "https_redirect_to_root_path" {
+  listener_arn = aws_lb_listener.https_for_private_ec2_instances.arn
   priority     = 2 # Lower priority
 
   action {
@@ -115,20 +135,3 @@ resource "aws_lb_target_group_attachment" "alb_to_private_ec2" {
   target_id        = each.value.id
   port             = 80
 }
-
-# HTTPS LISTENER
-# resource "aws_lb_listener" "lstnr_for_private_ec2_instances" {
-#   load_balancer_arn = aws_lb.alb_for_private_ec2s.arn
-#   port              = "443"
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-2016-08"
-#   certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
-
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.alb_to_private_ec2s.arn
-#   }
-#   tags = {
-#     Name = "${var.env_prefix}-ec2-alb-https"
-#   }
-# }
