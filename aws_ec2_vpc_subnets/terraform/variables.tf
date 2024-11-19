@@ -76,3 +76,8 @@ variable "private_key_name" {
   type        = string
   default     = "id_rsa"  # Update to the correct name if necessary
 }
+variable "domain_name" {
+  description = "Name of your root domain where a Route 53 TLS certificate has been issued for HTTPS enabled ALB"
+  type        = string
+  default     = "fiscalismia.com"  # Update to the correct name if necessary
+}

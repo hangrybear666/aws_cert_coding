@@ -26,6 +26,7 @@ module "load_balancing" {
   private_ec2_subnet_cidr_block = var.private_subnet_cidr_block_az1
   env_prefix = var.env_prefix
   aws_vpc = module.vpcs.dev_vpc
+  domain_name = var.domain_name
   ec2_instances = module.dev_ec2_instances.ec2_instances
 }
 

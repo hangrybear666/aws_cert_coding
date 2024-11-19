@@ -26,8 +26,10 @@ resource "aws_lb" "alb_for_private_ec2s" {
 #  |___ | .__/  |  |___ | \| |___ |  \
 resource "aws_lb_listener" "http_for_private_ec2_instances" {
   load_balancer_arn = aws_lb.alb_for_private_ec2s.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   =  data.aws_acm_certificate.my_tls_cert.arn
 
   default_action {
     type             = "forward"
@@ -54,7 +56,7 @@ resource "aws_alb_listener_rule" "http_root_path_forward" {
   }
 }
 
-resource "aws_alb_listener_rule" "http_redirect_to_root" {
+resource "aws_alb_listener_rule" "https_redirect_to_root" {
   listener_arn = aws_lb_listener.http_for_private_ec2_instances.arn
   priority     = 2 # Lower priority
 
@@ -62,8 +64,8 @@ resource "aws_alb_listener_rule" "http_redirect_to_root" {
     type = "redirect"
 
     redirect {
-      protocol    = "HTTP"
-      port        = "80"
+      protocol    = "HTTPS"
+      port        = "443"
       status_code = "HTTP_301"
       path        = "/" # Redirect to the root path
     }
