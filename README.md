@@ -82,7 +82,7 @@ output.txt
 -----
 
 <details closed>
-<summary><b>AWS EC2 - VPC - Subnets</b></summary>
+<summary><b>AWS EC2 - VPC - ALB - EIP - IGW/NAT GW</b></summary>
 
 ### 1. Install EC2 Bastion Host, 1-n EC2 Instances, VPCs /w Private & Public Subnet, IGW, NAT GW, Elastic IP, Load Balancer for ingress to private EC2 etc.
 
@@ -96,7 +96,7 @@ cd scripts/ && ./setup-env-vars.sh
 Create Public/Private Key pair so ec2-instance can add the public key to its ssh_config or use an existing key pair.
 
 #### c. Provide custom variables
-Create `terraform-02-ec2-modularized/terraform.tfvars` file and change any desired variables by overwriting the default values within `variables.tf`
+Create `aws_cert_coding/aws_ec2_vpc_subnets/terraform/terraform.tfvars` file and change any desired variables by overwriting the default values within `variables.tf`
 ```bash
 my_ips               = ["62.xxx.xxx.251/32", "3.xxx.xxx.109/32"]
 public_key_location  = "~/.ssh/id_ed25519.pub"
@@ -157,12 +157,43 @@ bash /home/admin/mount_efs_drive.sh 10.0.2.6
 bash /home/admin/install-git-on-debian-ec2.sh
 cd /home/admin/git/ec2-debian-init/scripts/
 sudo ./configure-ec2-swapfile.sh
-./install-docker-engine.sh
+bash install-docker-engine.sh
 cd /home/admin/
 bash expose_html_via_nginx.sh dev-1
-echo "" && c
+sleep 5
+echo "" && curl http://localhost
 ```
 
+</details>
+
+-----
+
+<details closed>
+<summary><b>AWS DNS via Route 53 over TLS</b></summary>
+
+#### a. Register a Domain with Route 53 domain registrar
+
+#### b. Provide custom variables
+Create `aws_cert_coding/aws_route_53/terraform/terraform.tfvars` file and change any desired variables by overwriting the default values within `variables.tf`
+```bash
+domain_name      = "asd.com"
+alb_arn          = "arn:aws:asdasd:eu-centrasdp/alb-asdasdasded33d3"
+subdomain_list   = [ "api", "demo" ]
+```
+
+#### c. Create S3 bucket to store terraform state to synchronize the state to remote storage as secure backup
+
+See https://github.com/hangrybear666/12-devops-bootcamp__terraform
+- Simply follow bonus step 3 to setup the s3 backend used in this project's `provider.tf` file (only required once for all states).
+- Change bucket = "{YOUR_S3_UNIQUE_BUCKET_NAME}" in `provider.tf` that you've set in bonus project 3.
+
+#### d. Setup Infrastructure
+
+```bash
+cd aws_route_53/terraform/
+terraform init
+terraform apply --auto-approve
+```
 </details>
 
 -----
