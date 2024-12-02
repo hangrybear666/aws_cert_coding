@@ -20,6 +20,7 @@ resource "aws_s3_bucket_public_access_block" "no_public_access" {
 resource "aws_s3_bucket_cors_configuration" "cross_origin_rules" {
   bucket = aws_s3_bucket.storage_bucket.id
 
+  # TODO
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["PUT", "POST"]
@@ -34,16 +35,45 @@ resource "aws_s3_bucket_cors_configuration" "cross_origin_rules" {
   }
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "archival_rules" {
+resource "aws_s3_bucket_lifecycle_configuration" "deletion_and_archival" {
   bucket = aws_s3_bucket.storage_bucket.id
 
   rule {
-    id = "rule-1"
-
+    id = "default-rule"
     filter {}
 
-    # ... other transition/expiration actions ...
-
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
     status = "Enabled"
   }
+
+  rule {
+    id = "permanent-deletion-after-90-days"
+    status = var.data_expiration ? "Enabled" : "Disabled"
+    filter {}
+    expiration {
+      days = 90
+    }
+  }
+
+  rule {
+    id = "storage-class-transition"
+    status = var.data_archival ? "Enabled" : "Disabled"
+    filter {}
+
+    transition {
+      days          = 15
+      storage_class = "STANDARD_IA"
+    }
+    transition {
+      days          = 30
+      storage_class = "GLACIER_IR"
+    }
+    transition {
+      days          = 45
+      storage_class = "GLACIER"
+    }
+  }
+
 }
