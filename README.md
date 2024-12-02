@@ -24,12 +24,14 @@ Create Public/Private Key pair so ec2-instance can add the public key to its ssh
 #### c. Provide custom variables
 Create `aws_cert_coding/aws_ec2_vpc_subnets/terraform/terraform.tfvars` file and change any desired variables by overwriting the default values within `variables.tf`
 ```bash
-my_ips               = ["62.xxx.xxx.251/32", "3.xxx.xxx.109/32"]
-public_key_location  = "~/.ssh/id_ed25519.pub"
-private_key_location = "~/.ssh/id_ed25519"
-public_key_name =     "id_ed25519.pub"
-private_key_name =     "id_ed25519"
-instance_count       = 2
+my_ips                      = ["81.xxx.xxx.231/32", "33.xxx.xxx.xxx/32"]
+public_key_location         = "~/.ssh/id_ed25519.pub"
+public_key_name             = "id_ed25519.pub"
+private_key_location        = "~/.ssh/id_ed25519"
+private_key_name            = "id_ed25519"
+bastion_host_instance_type  = "t2.micro"
+ec2_instance_type           = "t2.micro"
+ec2_instance_count          = 1
 ```
 
 #### d. Create S3 bucket to store terraform state to synchronize the state to remote storage as secure backup

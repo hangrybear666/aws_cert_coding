@@ -42,9 +42,9 @@ module "elastic_file_system" {
 
 # ec2 instances in private subnet
 module "dev_ec2_instances" {
-  source = "./modules/ec2-instance"
-  instance_count = var.instance_count
-  instance_type = var.instance_type
+  source = "./modules/ec2_instance"
+  instance_count = var.ec2_instance_count
+  instance_type = var.ec2_instance_type
   bastion_host_private_ip = module.bastion_host_instance.bastion_host_private_ip
   bastion_host_public_ip = module.bastion_host_instance.bastion_host_public_ip
   env_prefix = var.env_prefix
@@ -59,7 +59,7 @@ module "dev_ec2_instances" {
 # bastion host in public subnet for ssh tunneling to ec2 instance from external ip
 module "bastion_host_instance" {
   source = "./modules/bastion_host_instance"
-  instance_type = "t2.micro"
+  instance_type = var.bastion_host_instance_type
   my_ips = var.my_ips
   env_prefix = var.env_prefix
   ssh_key_name = module.dev_ec2_instances.ssh_key_name

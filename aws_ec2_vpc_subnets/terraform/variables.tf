@@ -45,12 +45,17 @@ variable "my_ips" {
   default     = ["0.0.0.0/0"] # Update to your IP (e.g. "203.0.113.0/32") for security
 }
 
-variable "instance_type" {
-  description = "The EC2 instance type to use"
+variable "bastion_host_instance_type" {
+  description = "The bastion host instance type"
   type        = string
   default     = "t2.micro"
 }
-variable "instance_count" {
+variable "ec2_instance_type" {
+  description = "The EC2 instance type to use for private instances"
+  type        = string
+  default     = "t2.micro"
+}
+variable "ec2_instance_count" {
   description = "The EC2 instances you desire"
   type        = number
   default     = 1
