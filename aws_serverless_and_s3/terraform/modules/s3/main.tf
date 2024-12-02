@@ -51,11 +51,11 @@ resource "aws_s3_bucket_lifecycle_configuration" "deletion_and_archival" {
   }
 
   rule {
-    id = "permanent-deletion-after-90-days"
+    id = "permanent-deletion-after-180-days"
     status = var.data_expiration ? "Enabled" : "Disabled"
     filter {}
     expiration {
-      days = 90
+      days = 180
     }
   }
 
@@ -65,15 +65,15 @@ resource "aws_s3_bucket_lifecycle_configuration" "deletion_and_archival" {
     filter {}
 
     transition {
-      days          = 15
+      days          = 30
       storage_class = "STANDARD_IA"
     }
     transition {
-      days          = 30
+      days          = 60
       storage_class = "GLACIER_IR"
     }
     transition {
-      days          = 45
+      days          = 150
       storage_class = "GLACIER"
     }
   }

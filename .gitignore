@@ -39,4 +39,5 @@ terraform.rc
 # custom
 .env
 payload.zip
+response.json
 aws_lambda/terraform/output.txt
