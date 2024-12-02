@@ -1,85 +1,11 @@
 # aws_cert_coding
-coming up
 
-<details closed>
-<summary><b>AWS IAM</b></summary>
+<b><u>Workflow:</u></b>
 
-#### 1. Create an organization in your root account and create a well Architected Multi Account Environment
-
-- First Create Organization in AWS Console to be able to execute the terraform config
-- Enable SCPs under AWS Organizations -> Policies -> Service control policies *Note: they don't apply to management acc/iam users of mgmt acc*
-- Enable AWS Resource Explorer in AWS Console to find resources across your organization easily
-- Enable AWS RAM (Resource Access Manager) in AWS Console to share resources between accounts on a high level.
-- In Resource Access Manager Settings Enable Resource Sharing Across AWS Organizations
-
-```bash
-cd aws_iam/terraform
-terraform init
-terraform apply-auto-approve
-```
-
-<u>The Hierarchy is as follows:</u>
-
-```bash
------------------------------------------------
-|           org/root                           |
-| dev ou  | sandbox ou | prod ou | network ou  |
-| dev_acc | tempdel ou |           network_acc |
-|                                              |
------------------------------------------------
-```
-
-*Notes:*
-- The dev VPC and Subnet created by aws_ec2_vpc_subnets is shared across the organization via RAM
-
-**To access EC2 instances of the admin account:**
-- Then login to dev account using credentials provided by
-- In the Switch Role dialog:
-- **Account ID**: Enter the Account ID of your admin account
-- - **Role Name**: Enter `EC2FullAccessRole`
-
-</details>
-
------
-<details closed>
-<summary><b>AWS Lambda</b></summary>
-
-### Theory
-
-#### Anti-Patterns
-
-- Chaining 2-n Lambda functions synchronously (where the first function waits for the last function to return) creates exponentially overlapping costs
-- Breaking the single responsibility principle of a lambda function makes it difficult to monitor, optimize and debug a function and might create additional costs due to autoscaling to the level of the most demanding task
-
-#### Best Practices
-
-- Use step functions instead of synchronous lambda functions to construct an event flow, branching paths, error handling, retries and fallbacks
-- When integrating with SQS use batch processing with x seconds wait window after queueing a message to collect multiple messages at once to avoid spamming lambda invocations (Optionally enable lambda to report failed message IDs in the batch to avoid reprocessing the entire batch)
-
-### Examples
-
-#### 1. Make changes to your example python lambda function, create payload zip archive, create resources and invoke function
-
-```bash
-cd aws_lambda/terraform/ && terraform init
-cd payload && rm -rf payload.zip
-zip -r payload.zip index.py && cd ..
-terraform apply --auto-approve
-```
-
-<u>Invoke Function via CLI</u>
-
-```bash
-aws lambda invoke \
---function-name ExampleTestLambdaFunction \
---payload '{"key1":"value1" }' \
---cli-binary-format raw-in-base64-out \
-output.txt
-```
-
-</details>
-
------
+- Create AWS VPC resources (public & private subnet, Bastion Host & Private EC2 - ALB to Private EC2 - EIP - IGW/NAT GW)
+- Setup DNS (subdomain & alias records for Domains -> ALB -> private EC2)
+- (Optional) Create AWS IAM Organizational Units /w accounts / Resource Sharing of resources
+- Create Lambda, Public HTTP API Gateway and S3 bucket for image upload & processing & storage
 
 <details closed>
 <summary><b>AWS EC2 - VPC - ALB - EIP - IGW/NAT GW</b></summary>
@@ -194,6 +120,86 @@ cd aws_route_53/terraform/
 terraform init
 terraform apply --auto-approve
 ```
+</details>
+
+-----
+
+<details closed>
+<summary><b>AWS IAM, Organizational Units, Resource Access Mgr, Network & Dev Account</b></summary>
+
+#### 1. Create an organization in your root account and create a well Architected Multi Account Environment
+
+- First Create Organization in AWS Console to be able to execute the terraform config
+- Enable SCPs under AWS Organizations -> Policies -> Service control policies *Note: they don't apply to management acc/iam users of mgmt acc*
+- Enable AWS Resource Explorer in AWS Console to find resources across your organization easily
+- Enable AWS RAM (Resource Access Manager) in AWS Console to share resources between accounts on a high level.
+- In Resource Access Manager Settings Enable Resource Sharing Across AWS Organizations
+
+```bash
+cd aws_iam/terraform
+terraform init
+terraform apply-auto-approve
+```
+
+<u>The Hierarchy is as follows:</u>
+
+```bash
+-----------------------------------------------
+|           org/root                           |
+| dev ou  | sandbox ou | prod ou | network ou  |
+| dev_acc | tempdel ou |           network_acc |
+|                                              |
+-----------------------------------------------
+```
+
+*Notes:*
+- The dev VPC and Subnet created by aws_ec2_vpc_subnets is shared across the organization via RAM
+
+**To access EC2 instances of the admin account:**
+- Then login to dev account using credentials provided by
+- In the Switch Role dialog:
+- **Account ID**: Enter the Account ID of your admin account
+- - **Role Name**: Enter `EC2FullAccessRole`
+
+</details>
+
+-----
+<details closed>
+<summary><b>AWS Serverless (Lambda, API Gateway) and S3 storage</b></summary>
+
+### Theory
+
+#### Anti-Patterns
+
+- Chaining 2-n Lambda functions synchronously (where the first function waits for the last function to return) creates exponentially overlapping costs
+- Breaking the single responsibility principle of a lambda function makes it difficult to monitor, optimize and debug a function and might create additional costs due to autoscaling to the level of the most demanding task
+
+#### Best Practices
+
+- Use step functions instead of synchronous lambda functions to construct an event flow, branching paths, error handling, retries and fallbacks
+- When integrating with SQS use batch processing with x seconds wait window after queueing a message to collect multiple messages at once to avoid spamming lambda invocations (Optionally enable lambda to report failed message IDs in the batch to avoid reprocessing the entire batch)
+
+### Examples
+
+#### 1. Make changes to your example python lambda function, create payload zip archive, create resources and invoke function
+
+```bash
+cd aws_lambda/terraform/ && terraform init
+cd payload && rm -rf payload.zip
+zip -r payload.zip index.py && cd ..
+terraform apply --auto-approve
+```
+
+<u>Invoke Function via CLI</u>
+
+```bash
+aws lambda invoke \
+--function-name ExampleTestLambdaFunction \
+--payload '{"key1":"value1" }' \
+--cli-binary-format raw-in-base64-out \
+output.txt
+```
+
 </details>
 
 -----

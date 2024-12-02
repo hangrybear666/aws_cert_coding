@@ -24,6 +24,9 @@ resource "aws_acm_certificate_validation" "cert_validation" {
   validation_record_fqdns = [for record in aws_route53_record.cert_validation_record : record.fqdn]
 }
 
+#   __        __      __   ___  __   __   __   __   __
+#  |  \ |\ | /__`    |__) |__  /  ` /  \ |__) |  \ /__`
+#  |__/ | \| .__/    |  \ |___ \__, \__/ |  \ |__/ .__/
 resource "aws_route53_record" "cert_validation_record" {
   for_each = {
     for dvo in aws_acm_certificate.my_tls_cert.domain_validation_options : dvo.domain_name => {
@@ -41,9 +44,6 @@ resource "aws_route53_record" "cert_validation_record" {
   zone_id         = data.aws_route53_zone.selected_zone.zone_id
 }
 
-#   __        __      __   ___  __   __   __   __   __
-#  |  \ |\ | /__`    |__) |__  /  ` /  \ |__) |  \ /__`
-#  |__/ | \| .__/    |  \ |___ \__, \__/ |  \ |__/ .__/
 resource "aws_route53_record" "type_A_root_domain" {
   zone_id = data.aws_route53_zone.selected_zone.zone_id
   name    = var.domain_name
