@@ -1,5 +1,6 @@
 variable "bucket_name" {}
 variable "bucket_description" {}
+variable "fqdn" {}
 variable "data_expiration" {
   default = false
   type    = bool
