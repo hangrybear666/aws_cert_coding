@@ -30,6 +30,8 @@ module "api_gateway" {
   fqdn                              = var.fqdn
   lambda_function_name_upload_img   = module.lambda_image_processing.function_name
   lambda_invoke_arn_upload_img      = module.lambda_image_processing.invoke_arn
+  post_food_item_img_route          = "POST ${var.post_food_item_img_route}"
+  default_stage                     = var.default_stage
 }
 
 # Lambda for receiving uploaded user images and reducing them in filesize

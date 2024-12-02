@@ -34,22 +34,21 @@ resource "aws_lambda_permission" "api_gateway" {
 
 resource "aws_apigatewayv2_route" "upload_img" {
   api_id    = aws_apigatewayv2_api.aws_api.id
-  route_key = "POST /aws_api/fiscalismia/upload/food_item_img"
+  route_key = "${var.post_food_item_img_route}"
   target    = "integrations/${aws_apigatewayv2_integration.upload_img.id}"
   depends_on = [aws_apigatewayv2_integration.upload_img]
 }
 
-# Default stage. Stages allow multi environment deploys like dev prod stage
 resource "aws_apigatewayv2_stage" "main_stage_route_config" {
   api_id      = aws_apigatewayv2_api.aws_api.id
-  name        = "default"
+  name        = var.default_stage
   description = "Default stage for Fiscalismia API"
   default_route_settings {
     throttling_burst_limit = 5    # Max burst of 5 requests
     throttling_rate_limit  = 2.0  # Sustained rate of 2 requests per second
   }
   route_settings {
-    route_key             = "POST /aws_api/fiscalismia/upload/food_item_img"
+    route_key             = "${var.post_food_item_img_route}"
     throttling_burst_limit = 5
     throttling_rate_limit  = 2.0
   }

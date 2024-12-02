@@ -10,10 +10,8 @@ output "http_aws_api_execution_arn" {
   description = "The http api execution arn"
   value = module.api_gateway.aws_api.execution_arn
 }
-
-output "http_aws_api_route_selection_expression" {
-  description = "The http route expression"
-  value = module.api_gateway.aws_api.route_selection_expression
+output "route_post_food_item_img" {
+  value = "${module.api_gateway.aws_api.api_endpoint}/${var.default_stage}${var.post_food_item_img_route}"
 }
 
 output "lambda_invoke_cmd_upload_img" {
