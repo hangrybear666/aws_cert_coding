@@ -1,6 +1,3 @@
-aws_lambda/terraform/output.txt
-.env
-
 # Local .terraform directories
 **/.terraform/*
 
@@ -40,5 +37,6 @@ override.tf.json
 terraform.rc
 
 # custom
-aws_ec2_vpc_subnets/terraform/.env
-playground/public_serve_static_html_ec2/index.html
+.env
+payload.zip
+aws_lambda/terraform/output.txt

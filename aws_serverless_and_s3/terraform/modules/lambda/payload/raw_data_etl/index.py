@@ -1,5 +1,5 @@
 def lambda_handler(event, context):
-  message = 'Hello {} !'.format(event['key1'])
+  message = 'Hello from raw_data_etl {} !'.format(event['key1'])
   return {
     'message' : message
   }
