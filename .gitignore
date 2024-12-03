@@ -37,6 +37,7 @@ override.tf.json
 terraform.rc
 
 # custom
+node_modules/
 .env
 payload.zip
 response.json

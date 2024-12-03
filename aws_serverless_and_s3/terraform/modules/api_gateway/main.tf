@@ -23,7 +23,6 @@ resource "aws_apigatewayv2_integration" "upload_img" {
   integration_uri           = var.lambda_invoke_arn_upload_img
 }
 
-# Integration with a Lambda function
 resource "aws_lambda_permission" "api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"

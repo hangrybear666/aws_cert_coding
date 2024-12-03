@@ -1,10 +1,41 @@
+
+const S3 = require("@aws-sdk/client-s3");
+const s3Client = new S3.S3Client({
+  region: "eu-central-1",
+});
+
+const processedImageBucket = "hangrybear-fiscalismia-image-storage";
+const bucketObject = {
+  "Bucket": processedImageBucket,
+  "Key": "heidelbeere.jpg"
+}
+
+const listFilesInBucket = async ({ bucketName }) => {
+  const command = new S3.ListObjectsV2Command({ Bucket: bucketName });
+  const { Contents } = await s3Client.send(command);
+  const contentsList = Contents.map((c) => ` • ${c.Key}`).join("\n");
+  console.log("\nHere's a list of files in the bucket:");
+  console.log(`${contentsList}\n`);
+};
+
+const getSingleObject = async (bucketObj) => {
+  const command = new S3.GetObjectCommand(bucketObj);
+  const response = await s3Client.send(command);
+  console.log(`\nFile size: ${(Number(response.ContentLength) / 1000000).toFixed(2)}MB`)
+}
+
 exports.handler = async (event) => {
+
+  console.log("Logging event....")
+  console.log(JSON.stringify(event, undefined, 2))
+  await listFilesInBucket({bucketName: processedImageBucket})
+  await getSingleObject(bucketObject)
   try {
     // Check if the request body exists
     if (!event.body) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "No file found in the request body." }),
+        body: JSON.stringify({ message: "No file found in the request body." })
       };
     }
 
@@ -35,7 +66,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: "Internal Server Error", error: error.message }),
+      body: JSON.stringify({ message: "Internal Server Error", error: error.message })
     };
   }
 };
