@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_execution_role" {
-  name = "lambda_execution_role_${var.function_purpose}"
+  name = "LambdaExecutionRole_${var.function_purpose}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -32,4 +32,6 @@ resource "aws_lambda_function" "api_gw_func" {
   handler                  = "index.handler"
   runtime                  = var.runtime_env
   depends_on               = [aws_iam_role_policy_attachment.execute_lambda_policy]
+  # to always recreate the lambda in case payload has been updated
+  source_code_hash         = filebase64sha256("${path.module}/payload/${var.function_purpose}/payload.zip")
 }

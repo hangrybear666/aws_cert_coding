@@ -1,5 +1,5 @@
 # Resource Policy allowing Lambda to list all objects and read/write objects
-data "aws_iam_policy_document" "lambda_s3_access" {
+data "aws_iam_policy_document" "lambda_s3_resource_policy_access" {
   statement {
     sid       = "LambdaBucketReadAccess"
     effect    = "Allow"
@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "lambda_s3_access" {
   }
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
+resource "aws_s3_bucket_policy" "resource_policy" {
   bucket = var.bucket_name
-  policy = data.aws_iam_policy_document.lambda_s3_access.json
+  policy = data.aws_iam_policy_document.lambda_s3_resource_policy_access.json
 }
