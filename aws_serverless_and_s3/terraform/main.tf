@@ -52,7 +52,7 @@ module "lambda_raw_data_etl" {
   source = "./modules/lambda"
   function_purpose              = "raw_data_etl"
   service_name                  = var.service_name
-  runtime_env                   = "python3.8"
+  runtime_env                   = "python3.13"
   layer_description             = "Python Dependencies for RAW Data ETL Lambda Function"
   layer_name                    = "${var.service_name}-raw-data-etl-python-layer"
   s3_bucket_name                = var.etl_bucket_name

@@ -34,7 +34,19 @@ output "lambda_invoke_cmd_raw_etl_processing" {
 #  | |\ | \  / /  \ |__/ |__     |__)  /\  |  |     |  \  /\   |   /\      |__   |  |       |     /\   |\/| |__) |  \  /\
 #  | | \|  \/  \__/ |  \ |___    |  \ /~~\ |/\| ___ |__/ /~~\  |  /~~\ ___ |___  |  |___    |___ /~~\  |  | |__) |__/ /~~\
 aws lambda invoke --function-name ${module.lambda_raw_data_etl.function_name} --payload '${jsonencode({key1 = "cli-test-value"})}' --cli-binary-format raw-in-base64-out /dev/stdout && echo "" && \
-  aws lambda invoke --function-name ${module.lambda_raw_data_etl.function_name} --payload '${jsonencode({key1 = "cli-test-value"})}' --cli-binary-format raw-in-base64-out --log-type Tail /dev/null | jq -r '.LogResult' | base64 --decode
+  aws lambda invoke --function-name ${module.lambda_raw_data_etl.function_name} --payload '${jsonencode({key1 = "cli-test-value", sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVcmgixKaP9LC-rrqS4D2rojIz48KwKA8QBmJloX1h7f8BkUloVuiw19eR2U5WvVT4InYgnPunUo49/pub?output=xlsx"})}' --cli-binary-format raw-in-base64-out --log-type Tail /dev/null | jq -r '.LogResult' | base64 --decode
+
+  EOT
+}
+
+output "lambda_invoke_cmd_upload_img_with_payload" {
+  description = ""
+  value = <<EOT
+
+//   __        __                   __               __                  __      ___       __   __   __   ___  __
+//  /  ` |  | |__) |       |  |    |__) | |\ |  /\  |__) \ /    |  |\/| / _`    |__  |\ | /  ` /  \ |  \ |__  |  \
+//  \__, \__/ |  \ |___    |/\|    |__) | | \| /~~\ |  \  |     |  |  | \__>    |___ | \| \__, \__/ |__/ |___ |__/
+bash modules/lambda/scripts/curl-rest-api.sh ${module.api_gateway.aws_api.api_endpoint}/${var.default_stage}${var.post_food_item_img_route}
 
   EOT
 }

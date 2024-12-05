@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DOCKER_IMG="public.ecr.aws/lambda/nodejs:20"
+
 LAYER_DIR="$(pwd)/modules/lambda/image_processing_layer/nodejs/node20/"
 ZIP_DIR="$(pwd)/modules/lambda/image_processing_layer/"
 mkdir -p $LAYER_DIR
@@ -23,9 +25,9 @@ if [[ -z "$docker_dir" ]]
     exit 1
 fi
 
-docker pull public.ecr.aws/lambda/nodejs:20
+docker pull $DOCKER_IMG
 
-docker run --rm --entrypoint /bin/bash -v $LAYER_DIR:/var/task public.ecr.aws/lambda/nodejs:20 -c "
+docker run --rm --entrypoint /bin/bash -v $LAYER_DIR:/var/task $DOCKER_IMG -c "
 ################## DEPENDENCY INSTALLATION BEGIN ###############
 npm i sharp@0.33.5
 ################## DEPENDENCY INSTALLATION END #################
@@ -34,6 +36,6 @@ npm i sharp@0.33.5
 # create zip
 cd $ZIP_DIR
 zip -r nodejs20.x_layer.zip nodejs
-docker run --rm --entrypoint /bin/bash -v $ZIP_DIR:/var/task public.ecr.aws/lambda/nodejs:20 -c "
+docker run --rm --entrypoint /bin/bash -v $ZIP_DIR:/var/task $DOCKER_IMG -c "
 rm -rf nodejs/
 "
