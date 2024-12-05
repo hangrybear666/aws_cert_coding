@@ -20,11 +20,13 @@ const bucketObject = {
 //  |___ /~~\  |  | |__) |__/ /~~\
 exports.handler = async (event) => {
 
-  // Debugging
+  // ####### Debugging
   // checkDependencies()
   // await listFilesInBucket({bucketName: processedImageBucket})
   // await getSingleObject(bucketObject)
-  await queryObjectWithSharp(bucketObject)
+  // await getSingleObjectWithSharp(bucketObject)
+
+
   try {
     // Check if the request body exists
     if (!event.body) {
@@ -71,23 +73,17 @@ exports.handler = async (event) => {
 //  | | \|  |  |___ |  \ | \| /~~\ |___    |    \__/ | \| \__,  |  | \__/ | \| .__/
 
 // Sharp Integration Testing
-const queryObjectWithSharp = async (bucketObj) => {
+const getSingleObjectWithSharp = async (bucketObj) => {
   try {
     const command = new S3.GetObjectCommand(bucketObj);
     const response = await client.send(command);
 
     const fileStream = response.Body;
-
-    // To get the file size, you can access the 'ContentLength' from the response
     const buffer = await streamToBuffer(fileStream);
-
-    // Process the image using sharp
     const imageMetadata = await sharp(buffer).metadata();
-
     const fileSize = response.ContentLength;
 
     console.log("\nHere's the retrieved image metadata:");
-
     console.log("Filename:", bucketObj.Key);
     console.log("File size:", fileSize, "bytes");
     console.log("Width:", imageMetadata.width);
@@ -96,7 +92,6 @@ const queryObjectWithSharp = async (bucketObj) => {
     console.error("Error retrieving or processing the image:", err);
   }
 };
-
 // Utility function to convert a stream to a buffer
 const streamToBuffer = (stream) => {
   return new Promise((resolve, reject) => {
@@ -115,13 +110,6 @@ const listFilesInBucket = async ({ bucketName }) => {
   console.log("\nHere's a list of files in the bucket:");
   console.log(`${contentsList}\n`);
 };
-
-// Retrieves a single object from an S3 bucket
-const getSingleObject = async (bucketObj) => {
-  const command = new S3.GetObjectCommand(bucketObj);
-  const response = await client.send(command);
-  console.log(`\nFile size: ${(Number(response.ContentLength) / 1000000).toFixed(2)}MB`)
-}
 
 // Checks whether or not the depdencies added to the connected layer can be accessed
 const checkDependencies = () => {
