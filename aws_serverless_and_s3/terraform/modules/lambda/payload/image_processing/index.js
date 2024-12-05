@@ -1,6 +1,6 @@
 
 const S3 = require("@aws-sdk/client-s3");
-const sharp = require("sharp");
+const sharp = require("sharp@0.33.5");
 const s3Client = new S3.S3Client({
   region: "eu-central-1",
 });

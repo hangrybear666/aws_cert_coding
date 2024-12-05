@@ -1,3 +1,8 @@
+variable "region" {
+  default = "eu-central-1"
+  description = "region for aws resources"
+  type = string
+}
 variable "fqdn" {
   default = "https://fiscalismia.com"
   description = "fully qualified domain name of source webservice for CORS access"

@@ -40,5 +40,7 @@ terraform.rc
 node_modules/
 .env
 payload.zip
+nodejs*_layer.zip
+python*_layer.zip
 response.json
 aws_lambda/terraform/output.txt
