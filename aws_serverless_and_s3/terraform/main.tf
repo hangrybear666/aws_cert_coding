@@ -43,6 +43,7 @@ module "lambda_image_processing" {
   service_name                  = var.service_name
   runtime_env                   = "nodejs20.x"
   layer_description             = "NodeJS Dependencies for Image Processing Lambda Function"
+  timeout_seconds               = 5
   layer_name                    = "${var.service_name}-image-processing-nodejs-layer"
   s3_bucket_name                = var.image_processing_bucket_name
 }
@@ -51,9 +52,10 @@ module "lambda_image_processing" {
 module "lambda_raw_data_etl" {
   source = "./modules/lambda"
   function_purpose              = "raw_data_etl"
-  service_name                  = var.service_name
   runtime_env                   = "python3.13"
   layer_description             = "Python Dependencies for RAW Data ETL Lambda Function"
+  service_name                  = var.service_name
+  timeout_seconds               = 15
   layer_name                    = "${var.service_name}-raw-data-etl-python-layer"
   s3_bucket_name                = var.etl_bucket_name
 }

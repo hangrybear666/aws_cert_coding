@@ -30,6 +30,7 @@ resource "aws_lambda_function" "api_gw_func" {
   filename                 = "${path.module}/payload/${var.function_purpose}/payload.zip"
   role                     = aws_iam_role.lambda_execution_role.arn
   handler                  = "index.handler"
+  timeout                  = var.timeout_seconds
   runtime                  = var.runtime_env
   depends_on               = [aws_iam_role_policy_attachment.execute_lambda_policy]
 

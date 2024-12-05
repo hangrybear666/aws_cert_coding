@@ -35,7 +35,7 @@ npm i sharp@0.33.5
 
 # create zip
 cd $ZIP_DIR
-zip -r nodejs20.x_layer.zip nodejs
+zip -r -q nodejs20.x_layer.zip nodejs
 docker run --rm --entrypoint /bin/bash -v $ZIP_DIR:/var/task $DOCKER_IMG -c "
 rm -rf nodejs/
 "
