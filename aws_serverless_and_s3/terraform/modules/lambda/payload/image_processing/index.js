@@ -1,61 +1,29 @@
-
+const fs = require('fs');
 const S3 = require("@aws-sdk/client-s3");
-const sharp = require("sharp@0.33.5");
-const s3Client = new S3.S3Client({
+const sharp = require("sharp");
+
+const client = new S3.S3Client({
   region: "eu-central-1",
 });
 
+//   __   __        __  ___           ___  __
+//  /  ` /  \ |\ | /__`  |   /\  |\ |  |  /__`
+//  \__, \__/ | \| .__/  |  /~~\ | \|  |  .__/
 const processedImageBucket = "hangrybear-fiscalismia-image-storage";
 const bucketObject = {
   "Bucket": processedImageBucket,
   "Key": "heidelbeere.jpg"
 }
 
-const listFilesInBucket = async ({ bucketName }) => {
-  const command = new S3.ListObjectsV2Command({ Bucket: bucketName });
-  const { Contents } = await s3Client.send(command);
-  const contentsList = Contents.map((c) => ` • ${c.Key}`).join("\n");
-  console.log("\nHere's a list of files in the bucket:");
-  console.log(`${contentsList}\n`);
-};
-
-const getSingleObject = async (bucketObj) => {
-  const command = new S3.GetObjectCommand(bucketObj);
-  const response = await s3Client.send(command);
-  console.log(`\nFile size: ${(Number(response.ContentLength) / 1000000).toFixed(2)}MB`)
-}
-
-const queryObjectWithSharp = async (bucketObj) => {
-  try {
-    const command = new S3.GetObjectCommand(bucketObj);
-    const response = await s3Client.send(command);
-
-    const fileStream = response.Body;
-
-    // To get the file size, you can access the 'ContentLength' from the response
-    const fileSize = response.ContentLength;
-
-    // Process the image data using sharp
-    const image = await sharp(fileStream).metadata();
-
-    console.log("\nHere's the retrieved image metadata:");
-
-    console.log("Filename:", bucketObj.Key);
-    console.log("File size:", fileSize, "bytes");
-    console.log("Width:", image.width);
-    console.log("Height:", image.height);
-  } catch (err) {
-    console.error("Error retrieving or processing the image:", err);
-  }
-};
-
-
+//                   __   __
+//  |     /\   |\/| |__) |  \  /\
+//  |___ /~~\  |  | |__) |__/ /~~\
 exports.handler = async (event) => {
 
-  console.log("Logging event....")
-  console.log(JSON.stringify(event, undefined, 2))
-  await listFilesInBucket({bucketName: processedImageBucket})
-  await getSingleObject(bucketObject)
+  // Debugging
+  // checkDependencies()
+  // await listFilesInBucket({bucketName: processedImageBucket})
+  // await getSingleObject(bucketObject)
   await queryObjectWithSharp(bucketObject)
   try {
     // Check if the request body exists
@@ -97,3 +65,80 @@ exports.handler = async (event) => {
     };
   }
 };
+
+//         ___  ___  __                     ___            __  ___    __        __
+//  | |\ |  |  |__  |__) |\ |  /\  |       |__  |  | |\ | /  `  |  | /  \ |\ | /__`
+//  | | \|  |  |___ |  \ | \| /~~\ |___    |    \__/ | \| \__,  |  | \__/ | \| .__/
+
+// Sharp Integration Testing
+const queryObjectWithSharp = async (bucketObj) => {
+  try {
+    const command = new S3.GetObjectCommand(bucketObj);
+    const response = await client.send(command);
+
+    const fileStream = response.Body;
+
+    // To get the file size, you can access the 'ContentLength' from the response
+    const buffer = await streamToBuffer(fileStream);
+
+    // Process the image using sharp
+    const imageMetadata = await sharp(buffer).metadata();
+
+    const fileSize = response.ContentLength;
+
+    console.log("\nHere's the retrieved image metadata:");
+
+    console.log("Filename:", bucketObj.Key);
+    console.log("File size:", fileSize, "bytes");
+    console.log("Width:", imageMetadata.width);
+    console.log("Height:", imageMetadata.height);
+  } catch (err) {
+    console.error("Error retrieving or processing the image:", err);
+  }
+};
+
+// Utility function to convert a stream to a buffer
+const streamToBuffer = (stream) => {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on('data', chunk => chunks.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+    stream.on('error', reject);
+  });
+};
+
+// Lists all contents of an S3 bucket
+const listFilesInBucket = async ({ bucketName }) => {
+  const command = new S3.ListObjectsV2Command({ Bucket: bucketName });
+  const { Contents } = await client.send(command);
+  const contentsList = Contents.map((c) => ` • ${c.Key}`).join("\n");
+  console.log("\nHere's a list of files in the bucket:");
+  console.log(`${contentsList}\n`);
+};
+
+// Retrieves a single object from an S3 bucket
+const getSingleObject = async (bucketObj) => {
+  const command = new S3.GetObjectCommand(bucketObj);
+  const response = await client.send(command);
+  console.log(`\nFile size: ${(Number(response.ContentLength) / 1000000).toFixed(2)}MB`)
+}
+
+// Checks whether or not the depdencies added to the connected layer can be accessed
+const checkDependencies = () => {
+  try {
+    const nodeModulesPath = '/opt/nodejs/node20/node_modules';  // Default path for Lambda layers
+    const filesInLayer = fs.readdirSync(nodeModulesPath);
+    console.log('Files in /opt/nodejs/node20/node_modules:', filesInLayer);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ success: 'Layer can be accessed' }),
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Failed to access the dependencies from the layer' }),
+    };
+  }
+}
