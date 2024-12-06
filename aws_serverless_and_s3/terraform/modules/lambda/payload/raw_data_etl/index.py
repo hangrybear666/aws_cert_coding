@@ -1,10 +1,34 @@
 import json
+import base64
 import tempfile
 import requests # not in aws runtime
 from openpyxl import load_workbook # not in aws runtime
 
 def handler(event, context):
-  print('Hello from raw_data_etl {} !'.format(event['key1']))
+  body = event["body"]
+  headers = event["headers"]
+  contentLength = int(headers.get('Content-Length'))
+
+  if event["body"] == None or contentLength == 0:
+    return {
+      "statusCode": 422,
+      "body": json.dumps({"message": "please provide a payload. Received empty request body."})
+    }
+  encoded_string = "aGVsbG8gd29ybGQ="  # base64-encoded "hello world"
+  decoded_bytes = base64.b64decode(encoded_string)
+  decoded_string = decoded_bytes.decode("utf-8")
+  extracedEventKeys = {
+    "path" : event["path"],
+    "authorization" : event["headers"].get('authorization', None),
+    "forwardedFor" : headers.get('X-Forwarded-For'),
+    "contentLength" : contentLength,
+    "body": event["body"],
+    "decodedBody" : decoded_string
+  }
+  return {"statusCode": 200,
+          "body": json.dumps({
+            "eventKeys": extracedEventKeys
+          })}
   try:
     # Get the Google Sheets public link from the event
     sheet_url = event.get("sheet_url")
@@ -27,6 +51,7 @@ def handler(event, context):
 
     # Download the file
     response = requests.get(sheet_url)
+    print(response)
     if response.status_code != 200:
       return {
         "statusCode": 500,

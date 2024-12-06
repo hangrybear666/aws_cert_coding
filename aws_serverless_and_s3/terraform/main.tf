@@ -32,7 +32,10 @@ module "api_gateway" {
   fqdn                              = var.fqdn
   lambda_function_name_upload_img   = module.lambda_image_processing.function_name
   lambda_invoke_arn_upload_img      = module.lambda_image_processing.invoke_arn
-  post_food_item_img_route          = "POST ${var.post_food_item_img_route}"
+  lambda_function_name_raw_data_etl = module.lambda_raw_data_etl.function_name
+  lambda_invoke_arn_raw_data_etl    = module.lambda_raw_data_etl.invoke_arn
+  post_img_route                    = "POST ${var.post_img_route}"
+  post_raw_data_route               = "POST ${var.post_raw_data_route}"
   default_stage                     = var.default_stage
 }
 
