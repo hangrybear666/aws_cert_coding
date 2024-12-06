@@ -4,7 +4,6 @@ variable "ip_whitelist_lambda_processing" {
   type = string
 }
 variable "secret_api_key" {
-  sensitive = true
   default = ""  # Override ONLY IN terraform.tfvars to hide whitelist from git repository
   description = "API KEY to allow lambda processing. Passed in lambda env vars."
   type = string

@@ -47,6 +47,7 @@ aws lambda invoke --function-name ${module.lambda_raw_data_etl.function_name} \
 output "lambda_invoke_cmd_upload_img_with_payload" {
   description = ""
   value = <<EOT
+bash modules/lambda/scripts/curl-api-sheet-url.sh https://dvtkxey9mk.execute-api.eu-central-1.amazonaws.com/api/fiscalismia/post/sheet_url/process_lambda/return_tsv_file_urls lkasdkljadskl28281291dasfasfasf
 
 //   __        __                   __               __                  __      ___       __   __   __   ___  __
 //  /  ` |  | |__) |       |  |    |__) | |\ |  /\  |__) \ /    |  |\/| / _`    |__  |\ | /  ` /  \ |  \ |__  |  \
@@ -57,7 +58,9 @@ bash modules/lambda/scripts/curl-api-img-upload.sh ${module.api_gateway.aws_api.
 #   __        __                   __        ___  ___ ___           __
 #  /  ` |  | |__) |       |  |    /__` |__| |__  |__   |      |  | |__) |
 #  \__, \__/ |  \ |___    |/\|    .__/ |  | |___ |___  |  ___ \__/ |  \ |___
-bash modules/lambda/scripts/curl-api-sheet-url.sh ${module.api_gateway.aws_api.api_endpoint}/${var.default_stage}${var.post_raw_data_route}
+
+# WARNING: Do NOT save this output to version control. It contains your Secret API Key
+bash modules/lambda/scripts/curl-api-sheet-url.sh ${module.api_gateway.aws_api.api_endpoint}/${var.default_stage}${var.post_raw_data_route} ${var.secret_api_key}
 
   EOT
 }
