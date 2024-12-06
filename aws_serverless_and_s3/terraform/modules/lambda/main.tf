@@ -34,6 +34,12 @@ resource "aws_lambda_function" "api_gw_func" {
   runtime                  = var.runtime_env
   depends_on               = [aws_iam_role_policy_attachment.execute_lambda_policy]
 
+  environment {
+    variables = {
+      IP_WHITELIST = "${var.ip_whitelist_lambda_processing}"
+      API_KEY = "${var.secret_api_key}"
+    }
+  }
   layers = [
     aws_lambda_layer_version.dependency_layer.arn
   ]

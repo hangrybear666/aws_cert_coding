@@ -1,3 +1,14 @@
+variable "ip_whitelist_lambda_processing" {
+  default = "0.0.0.0" # Override ONLY IN terraform.tfvars to hide whitelist from git repository
+  description = "Comma separated list to allow only specific ips access to Lambda functions. Passed in lambda env vars. Default is allowing all (0.0.0.0)."
+  type = string
+}
+variable "secret_api_key" {
+  sensitive = true
+  default = ""  # Override ONLY IN terraform.tfvars to hide whitelist from git repository
+  description = "API KEY to allow lambda processing. Passed in lambda env vars."
+  type = string
+}
 variable "region" {
   default = "eu-central-1"
   description = "region for aws resources"

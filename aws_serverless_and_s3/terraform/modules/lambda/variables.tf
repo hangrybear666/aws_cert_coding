@@ -5,3 +5,5 @@ variable "s3_bucket_name" {}
 variable "layer_description" {}
 variable "layer_name" {}
 variable "timeout_seconds" {}
+variable "ip_whitelist_lambda_processing" {}
+variable "secret_api_key" {}

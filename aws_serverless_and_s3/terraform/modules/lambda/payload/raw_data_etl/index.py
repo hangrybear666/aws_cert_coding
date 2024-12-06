@@ -1,3 +1,4 @@
+import os
 import json
 import base64
 import tempfile
@@ -5,25 +6,54 @@ import requests # not in aws runtime
 from openpyxl import load_workbook # not in aws runtime
 
 def handler(event, context):
+  ALLOW_IP_BASED_ACCESS = False
+
   body = event["body"]
   headers = event["headers"]
   contentLength = int(headers.get('Content-Length'))
-
-  if event["body"] == None or contentLength == 0:
+  authorization = headers.get('authorization', None)
+  requestIp = headers.get('X-Forwarded-For')
+  # block access if payload is empty
+  if body == None or contentLength == 0:
     return {
       "statusCode": 422,
       "body": json.dumps({"message": "please provide a payload. Received empty request body."})
     }
-  encoded_string = "aGVsbG8gd29ybGQ="  # base64-encoded "hello world"
-  decoded_bytes = base64.b64decode(encoded_string)
-  decoded_string = decoded_bytes.decode("utf-8")
+  # block access if authorization header does not include the API TOKEN
+  apiKeyEnvStr = os.getenv('API_KEY')
+  if authorization == None or apiKeyEnvStr == None or authorization != apiKeyEnvStr:
+    return {
+      "statusCode": 403,
+      "body": json.dumps({"message": "Invalid authorization header."})
+    }
+  # block access if requesting IP-address is not whitelisted
+  ipWhitelistEnvStr = os.getenv('IP_WHITELIST')
+  if ipWhitelistEnvStr == None or ipWhitelistEnvStr == "":
+    return {
+      "statusCode": 422,
+      "body": json.dumps({"message": "ip address whitelist not found among environment variables."})
+    }
+  ipWhitelist = ipWhitelistEnvStr.split(",")
+  if len(ipWhitelist) == 1 and ipWhitelist[0] == "0.0.0.0":
+    ALLOW_IP_BASED_ACCESS = True
+  elif len(ipWhitelist) > 1:
+    for ip in ipWhitelist:
+      if requestIp == ip:
+        ALLOW_IP_BASED_ACCESS = True
+  if not ALLOW_IP_BASED_ACCESS:
+    return {
+      "statusCode": 403,
+      "body": json.dumps({"message": "IP based access denied."})
+    }
+  decodedBytes = base64.b64decode(body)
+  decodedBody = decodedBytes.decode("utf-8")
   extracedEventKeys = {
     "path" : event["path"],
-    "authorization" : event["headers"].get('authorization', None),
     "forwardedFor" : headers.get('X-Forwarded-For'),
     "contentLength" : contentLength,
     "body": event["body"],
-    "decodedBody" : decoded_string
+    "ipWhitelist": ipWhitelist,
+    "decodedBody" : decodedBody
   }
   return {"statusCode": 200,
           "body": json.dumps({
