@@ -1,9 +1,12 @@
 #!/bin/bash
 
-DOCKER_IMG="public.ecr.aws/lambda/nodejs:20"
+RUNTIME_ENV=$1
+DOCKER_IMG=$2
+NODE_V="node22"
+ZIP_NAME="$(echo $1)_layer.zip"
 
-LAYER_DIR="$(pwd)/modules/lambda/image_processing_layer/nodejs/node20/"
-ZIP_DIR="$(pwd)/modules/lambda/image_processing_layer/"
+LAYER_DIR="$(pwd)/image_processing_layer/nodejs/$NODE_V/"
+ZIP_DIR="$(pwd)/image_processing_layer/"
 mkdir -p $LAYER_DIR
 
 RED='\033[0;31m' # ANSI Escape code
@@ -35,7 +38,9 @@ npm i sharp@0.33.5
 
 # create zip
 cd $ZIP_DIR
-zip -r -q nodejs20.x_layer.zip nodejs
+zip -r -q $ZIP_NAME nodejs
+echo "" && echo ">>>>>>>>>>>>>>>> Zipped installed dependencies to [$ZIP_NAME] <<<<<<<<<<<<<<<<<<<" && echo ""
+
 docker run --rm --entrypoint /bin/bash -v $ZIP_DIR:/var/task $DOCKER_IMG -c "
 rm -rf nodejs/
 "

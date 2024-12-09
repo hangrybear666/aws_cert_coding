@@ -4,19 +4,19 @@ resource "aws_lambda_layer_version" "dependency_layer" {
   compatible_runtimes = [var.runtime_env]
   compatible_architectures = ["x86_64"]
   filename = "${path.module}/${var.function_purpose}_layer/${var.runtime_env}_layer.zip"
-  depends_on = [null_resource.create_dependency_layer]
-  source_code_hash = filebase64sha256("${path.module}/${var.function_purpose}_layer/${var.runtime_env}_layer.zip")
+  depends_on = [time_sleep.wait_for_layer_creation]
 }
 
-# data "external" "create_dependency_layer" {
-#   program = ["bash", "${path.module}/scripts/create_${var.function_purpose}_layer.sh" ]
-# }
+resource "time_sleep" "wait_for_layer_creation" {
+  depends_on = [null_resource.create_dependency_layer]
+  create_duration = "5s"
+}
 
 resource "null_resource" "create_dependency_layer" {
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     working_dir = "${path.module}"
-    command = "bash scripts/create_${var.function_purpose}_layer.sh"
+    command = "bash scripts/create_${var.function_purpose}_layer.sh ${var.runtime_env} ${var.layer_docker_img}"
   }
   triggers = {
     always_trigger = timestamp()

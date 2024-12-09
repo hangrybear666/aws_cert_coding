@@ -11,7 +11,7 @@ API_KEY=$2
 if [[ -z $1 ]]
 then
   echo "no api endpoint supplied as script parameter. defaulting to hardcoded version"
-  API_ENDPOINT="https://dvtkxey9mk.execute-api.eu-central-1.amazonaws.com/api/fiscalismia/post/sheet_url/process_lambda/return_tsv_file_urls"
+  API_ENDPOINT="https://tn30dnepf3.execute-api.eu-central-1.amazonaws.com/api/fiscalismia/post/sheet_url/process_lambda/return_tsv_file_urls"
 else
   API_ENDPOINT=$1
 fi

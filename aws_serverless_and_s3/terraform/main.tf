@@ -43,8 +43,9 @@ module "api_gateway" {
 module "lambda_image_processing" {
   source                        = "./modules/lambda"
   function_purpose              = "image_processing"
-  runtime_env                   = "nodejs20.x"
   layer_description             = "NodeJS Dependencies for Image Processing Lambda Function"
+  runtime_env                   = "nodejs22.x"
+  layer_docker_img              = "public.ecr.aws/lambda/nodejs:22.2024.11.22.14-x86_64"
   timeout_seconds               = 5
   layer_name                    = "${var.service_name}-image-processing-nodejs-layer"
   s3_bucket_name                = var.image_processing_bucket_name
@@ -57,8 +58,9 @@ module "lambda_image_processing" {
 module "lambda_raw_data_etl" {
   source = "./modules/lambda"
   function_purpose              = "raw_data_etl"
-  runtime_env                   = "python3.13"
   layer_description             = "Python Dependencies for RAW Data ETL Lambda Function"
+  runtime_env                   = "python3.13"
+  layer_docker_img              = "public.ecr.aws/lambda/python:3.13.2024.11.22.15-x86_64"
   timeout_seconds               = 15
   layer_name                    = "${var.service_name}-raw-data-etl-python-layer"
   s3_bucket_name                = var.etl_bucket_name

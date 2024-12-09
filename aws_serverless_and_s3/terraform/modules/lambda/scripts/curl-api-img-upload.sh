@@ -3,7 +3,7 @@
 if [[ -z $1 ]]
 then
   echo "no api endpoint supplied as script parameter. defaulting to hardcoded version"
-  API_ENDPOINT="https://dvtkxey9mk.execute-api.eu-central-1.amazonaws.com/api/fiscalismia/upload/food_item_img"
+  API_ENDPOINT="https://tn30dnepf3.execute-api.eu-central-1.amazonaws.com/api/fiscalismia/upload/food_item_img"
 else
   API_ENDPOINT=$1
 fi
