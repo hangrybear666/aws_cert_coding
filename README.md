@@ -10,6 +10,20 @@
 <details closed>
 <summary><b>AWS EC2 - VPC - ALB - EIP - IGW/NAT GW</b></summary>
 
+
+#### Architectural Overview
+TODO
+
+<u>Included Resources:</u>
+
+- Single VPC with 1 public subnet and 2 private subnets (in 2 AZs)
+- Public Subnet with NAT GW + IGW
+- EC2 Bastion Host in Public Subnet
+- EC2 private instance(s) in private subnet only reachable from ALB/Bastion Host
+- ALB in public and private subnet (2 AZs) for accessing private EC2 instance
+- Elastic IP for TODO
+- TODO
+
 ### 1. Install EC2 Bastion Host, 1-n EC2 Instances, VPCs /w Private & Public Subnet, IGW, NAT GW, Elastic IP, Load Balancer for ingress to private EC2 etc.
 
 #### a. Setup Environment Variables with your secrets and configuration
@@ -99,6 +113,14 @@ echo "" && curl http://localhost
 <details closed>
 <summary><b>AWS DNS via Route 53 over TLS</b></summary>
 
+
+#### Architectural Overview
+TODO
+
+<u>Included Resources:</u>
+
+- TODO
+
 #### a. Register a Domain with Route 53 domain registrar
 
 #### b. Provide custom variables
@@ -117,6 +139,11 @@ See https://github.com/hangrybear666/12-devops-bootcamp__terraform
 
 #### d. Setup Infrastructure
 
+
+<u>Included Resources:</u>
+
+- TODO
+
 ```bash
 cd aws_route_53/terraform/
 terraform init
@@ -127,7 +154,23 @@ terraform apply --auto-approve
 -----
 
 <details closed>
-<summary><b>AWS IAM, Organizational Units, Resource Access Mgr, Network & Dev Account</b></summary>
+<summary><b>AWS IAM, Organizationaand invoke functionl Units, Resource Access Mgr, Network & Dev Account</b></summary>
+
+#### Architectural Overview
+TODO
+
+<u>Included Resources:</u>
+
+- TODO
+
+```bash
+-----------------------------------------------
+|           org/root                           |
+| dev ou  | sandbox ou | prod ou | network ou  |
+| dev_acc | tempdel ou |           network_acc |
+|                                              |
+-----------------------------------------------
+```
 
 #### 1. Create an organization in your root account and create a well Architected Multi Account Environment
 
@@ -140,18 +183,7 @@ terraform apply --auto-approve
 ```bash
 cd aws_iam/terraform
 terraform init
-terraform apply-auto-approve
-```
-
-<u>The Hierarchy is as follows:</u>
-
-```bash
------------------------------------------------
-|           org/root                           |
-| dev ou  | sandbox ou | prod ou | network ou  |
-| dev_acc | tempdel ou |           network_acc |
-|                                              |
------------------------------------------------
+terraform apply --auto-approve
 ```
 
 *Notes:*
@@ -181,25 +213,29 @@ terraform apply-auto-approve
 - Use step functions instead of synchronous lambda functions to construct an event flow, branching paths, error handling, retries and fallbacks
 - When integrating with SQS use batch processing with x seconds wait window after queueing a message to collect multiple messages at once to avoid spamming lambda invocations (Optionally enable lambda to report failed message IDs in the batch to avoid reprocessing the entire batch)
 
-### Examples
+#### Architectural Overview
+![IMG UPLOAD LAMBDA ARCH](aws_serverless_and_s3/docs/serverless_architecture_img_upload.png)
 
-#### 1. Make changes to your example python lambda function, create payload zip archive, create resources and invoke function
+<u>Included Resources:</u>
 
+- API HTTP Gateway that can invoke Lambda functions
+- 2 Lambda Functions for Img Upload and Google Sheets Raw Data ETL
+- 2 Lambda Layers containing the runtime dependencies not included in aws by default
+- 2 S3 Buckets accessed by Lambda for storing processed images and sheet output
+- Respective IAM Roles and Permissions to allow access between API GW - Lambda - S3
+
+#### 1. Provide custom variables
+Create `aws_cert_coding/aws_serverless_and_s3/terraform/terraform.tfvars` file and change any desired variables by overwriting the default values within `variables.tf`
 ```bash
-cd aws_lambda/terraform/ && terraform init
-cd payload && rm -rf payload.zip
-zip -r payload.zip index.py && cd ..
-terraform apply --auto-approve
+secret_api_key = "xxx"
+test_sheet_url = "https://docs.google.com/spreadsheets/d/{YOUR_ID}/edit"
 ```
 
-<u>Invoke Function via CLI</u>
+#### 2. Make changes to your lambda functions and provision the resources
 
 ```bash
-aws lambda invoke \
---function-name ExampleTestLambdaFunction \
---payload '{"key1":"value1" }' \
---cli-binary-format raw-in-base64-out \
-output.txt
+cd aws_serverless_and_s3/terraform/ && terraform init
+terraform apply --auto-approve
 ```
 
 </details>
