@@ -106,6 +106,7 @@ def handler(event, context):
     logTimePassed(start_time, "temp file write")
     # Open the file and list sheets
     workbook = load_workbook(filename=temp_filename)
+    logTimePassed(start_time, "load workbook into var")
     sheet_names = workbook.sheetnames
     logTimePassed(start_time, "sheet name extraction")
     return {

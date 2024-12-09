@@ -63,7 +63,7 @@ module "lambda_raw_data_etl" {
   runtime_env                   = "python3.13"
   layer_docker_img              = "public.ecr.aws/lambda/python:3.13.2024.11.22.15-x86_64"
   timeout_seconds               = 30
-  memory_size                   = 512
+  memory_size                   = 256
   layer_name                    = "${var.service_name}-raw-data-etl-python-layer"
   s3_bucket_name                = var.etl_bucket_name
   service_name                  = var.service_name
