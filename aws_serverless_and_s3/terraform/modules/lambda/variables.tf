@@ -8,3 +8,4 @@ variable "timeout_seconds" {}
 variable "ip_whitelist_lambda_processing" {}
 variable "secret_api_key" {}
 variable "layer_docker_img" {}
+variable "memory_size" {}

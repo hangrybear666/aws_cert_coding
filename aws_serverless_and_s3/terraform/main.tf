@@ -47,6 +47,7 @@ module "lambda_image_processing" {
   runtime_env                   = "nodejs22.x"
   layer_docker_img              = "public.ecr.aws/lambda/nodejs:22.2024.11.22.14-x86_64"
   timeout_seconds               = 5
+  memory_size                   = 128
   layer_name                    = "${var.service_name}-image-processing-nodejs-layer"
   s3_bucket_name                = var.image_processing_bucket_name
   service_name                  = var.service_name
@@ -61,7 +62,8 @@ module "lambda_raw_data_etl" {
   layer_description             = "Python Dependencies for RAW Data ETL Lambda Function"
   runtime_env                   = "python3.13"
   layer_docker_img              = "public.ecr.aws/lambda/python:3.13.2024.11.22.15-x86_64"
-  timeout_seconds               = 15
+  timeout_seconds               = 30
+  memory_size                   = 512
   layer_name                    = "${var.service_name}-raw-data-etl-python-layer"
   s3_bucket_name                = var.etl_bucket_name
   service_name                  = var.service_name

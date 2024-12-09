@@ -60,7 +60,7 @@ bash modules/lambda/scripts/curl-api-img-upload.sh ${module.api_gateway.aws_api.
 #  \__, \__/ |  \ |___    |/\|    .__/ |  | |___ |___  |  ___ \__/ |  \ |___
 
 # WARNING: Do NOT save this output to version control. It contains your Secret API Key
-bash modules/lambda/scripts/curl-api-sheet-url.sh ${module.api_gateway.aws_api.api_endpoint}/${var.default_stage}${var.post_raw_data_route} ${var.secret_api_key}
+bash modules/lambda/scripts/curl-api-sheet-url.sh ${module.api_gateway.aws_api.api_endpoint}/${var.default_stage}${var.post_raw_data_route} ${var.secret_api_key} ${var.test_sheet_url}
 
   EOT
 }

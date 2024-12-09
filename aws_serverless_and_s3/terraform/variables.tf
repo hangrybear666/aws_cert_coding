@@ -8,6 +8,11 @@ variable "secret_api_key" {
   description = "API KEY to allow lambda processing. Passed in lambda env vars."
   type = string
 }
+variable "test_sheet_url" {
+  default = ""  # Override ONLY IN terraform.tfvars to hide google sheets link from git repo
+  description = "sheet url for testing rest api raw etl endpoint"
+  type = string
+}
 variable "region" {
   default = "eu-central-1"
   description = "region for aws resources"
