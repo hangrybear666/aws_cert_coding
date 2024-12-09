@@ -4,6 +4,7 @@ import base64
 import tempfile
 import requests # not in aws runtime
 import time
+from io import BytesIO
 from openpyxl import load_workbook # not in aws runtime
 
 def authenticate_request(body, headers):
@@ -99,13 +100,13 @@ def handler(event, context):
         "statusCode": 500,
         "body": json.dumps({"error": "Failed to download the sheet"})
       }
-    # Save to a temporary file
+    # Save to a temporary file on disk for potential S3 backup
     with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
         temp_file.write(response.content)
-        temp_filename = temp_file.name
     logTimePassed(start_time, "temp file write")
-    # Open the file and list sheets
-    workbook = load_workbook(filename=temp_filename)
+    # Load Workbook directly from memory for performance reasons
+    file_content = BytesIO(response.content)
+    workbook = load_workbook(file_content, read_only=True)
     logTimePassed(start_time, "load workbook into var")
     sheet_names = workbook.sheetnames
     logTimePassed(start_time, "sheet name extraction")
