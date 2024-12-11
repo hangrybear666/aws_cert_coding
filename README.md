@@ -128,7 +128,7 @@ Create `aws_cert_coding/aws_route_53/terraform/terraform.tfvars` file and change
 ```bash
 domain_name      = "asd.com"
 alb_arn          = "arn:aws:asdasd:eu-centrasdp/alb-asdasdasded33d3"
-subdomain_list   = [ "api", "demo" ]
+subdomain_list   = [ "api", "demo", "admin" ]
 ```
 
 #### c. Create S3 bucket to store terraform state to synchronize the state to remote storage as secure backup
@@ -214,7 +214,8 @@ terraform apply --auto-approve
 - When integrating with SQS use batch processing with x seconds wait window after queueing a message to collect multiple messages at once to avoid spamming lambda invocations (Optionally enable lambda to report failed message IDs in the batch to avoid reprocessing the entire batch)
 
 #### Architectural Overview
-![IMG UPLOAD LAMBDA ARCH](aws_serverless_and_s3/docs/serverless_architecture_img_upload.png)
+![img_upload lambda architecture](aws_serverless_and_s3/docs/img_upload_architecture_dark.png)
+![raw_data_etl lambda architecture](aws_serverless_and_s3/docs/raw_data_etl_architecture_dark.png)
 
 <u>Included Resources:</u>
 
