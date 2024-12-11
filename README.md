@@ -214,8 +214,8 @@ terraform apply --auto-approve
 - When integrating with SQS use batch processing with x seconds wait window after queueing a message to collect multiple messages at once to avoid spamming lambda invocations (Optionally enable lambda to report failed message IDs in the batch to avoid reprocessing the entire batch)
 
 #### Architectural Overview
-![img_upload lambda architecture](aws_serverless_and_s3/docs/img_upload_architecture_dark.png)
-![raw_data_etl lambda architecture](aws_serverless_and_s3/docs/raw_data_etl_architecture_dark.png)
+![img_upload lambda architecture](aws_serverless_and_s3/docs/img_upload_architecture_darkmode.png)
+![raw_data_etl lambda architecture](aws_serverless_and_s3/docs/raw_data_etl_architecture_darkmode.png)
 
 <u>Included Resources:</u>
 
